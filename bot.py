@@ -56,18 +56,20 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         # PrintBasic.print_obj(event)
         tick_price = float(event.lastPrice)
         POS_SIZE = round(user_session["balance"] / _5_min_close[-1] * 0.1, 2)
-        STOP_LVL = round(tick_price * 0.98, 2)
+        buy_stop_lvl = round(tick_price * 0.97, 2)
+        sell_stop_lvl = round(tick_price * 0.97, 2)
         print(tick_price)
         if user_session["in_position"] == False:
             if sma21_bull_buy(tick_price, rsi_5min, sma21_5min, ema200_15min):
                 order = market_buy(SYMBOL, POS_SIZE)
                 print(order)
                 user_session["active_position"] = "+ "+POS_SIZE
-                buy_stop(SYMBOL, POS_SIZE, STOP_LVL)
+                buy_stop(SYMBOL, POS_SIZE, buy_stop_lvl)
             if sma21_bear_sell(tick_price, rsi_5min, sma21_5min, ema200_15min):
                 order = market_sell(SYMBOL, POS_SIZE)
                 print(order)
                 user_session["active_position"] = "- "+POS_SIZE
+                sell_stop(SYMBOL, POS_SIZE, sell_stop_lvl)
         if user_session["in_position"] == True:
             if sma21_bull_sell(rsi_5min):
                 order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1]) 
