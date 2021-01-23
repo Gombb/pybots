@@ -102,16 +102,16 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
     if data_type == SubscribeMessageType.RESPONSE:
             print("Event ID: ", event)
     elif  data_type == SubscribeMessageType.PAYLOAD:
-        # print("5min alive!")
+        # PrintBasic.print_obj(event.data)
         
-        if event.data.isClosed == "True":
+        if event.data.isClosed == True:
             print(user_session)
             print("Event type: ", event.eventType)
             print("Event time: ", event.eventTime)
             print("Symbol: ", event.symbol)
             print("Data:")
             
-            PrintBasic.print_obj(event.data)
+            
             collect_closes(event.data.close, _5_min_close)
     else:
         print("Unknown Data:")
@@ -124,7 +124,7 @@ def candle_callback_15min(data_type: 'SubscribeMessageType', event: 'any'):
             print("Event ID: ", event)
     elif  data_type == SubscribeMessageType.PAYLOAD:
         # print("15min alive!")
-        if event.data.isClosed == "True":
+        if event.data.isClosed == True:
             print("Event type: ", event.eventType)
             print("Event time: ", event.eventTime)
             print("Symbol: ", event.symbol)
