@@ -75,14 +75,14 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
             if sma21_bull_buy(tick_price, rsi_5min, sma21_5min, ema200_15min):
                 order = market_buy(SYMBOL, order_size)
                 print(order)
-                user_session["active_position"] = "+ "+order_size
-                buy_stop(SYMBOL, order_size, buy_stop_lvl)
+                user_session["active_position"] = "+ " + str(order.origQty)
+                buy_stop(SYMBOL, order.origQty, buy_stop_lvl)
                 user_session["in_position"] = True
             if sma21_bear_sell(tick_price, rsi_5min, sma21_5min, ema200_15min):
                 order = market_sell(SYMBOL, order_size)
                 print(order)
-                user_session["active_position"] = "- "+order_size
-                sell_stop(SYMBOL, order_size, sell_stop_lvl)
+                user_session["active_position"] = "- "+ str(order.origQty)
+                sell_stop(SYMBOL, order.origQty, sell_stop_lvl)
                 user_session["in_position"] = True
         if user_session["in_position"] == True:
             if sma21_bull_sell(rsi_5min):
