@@ -12,10 +12,14 @@ from strat import *
 from config import *
 from orders import *
 
+
+
 RSI_PERIOD = 14
 SYMBOL = 'ETHUSDT'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
+POS_SIZE = 0.5
+
 
 logger = logging.getLogger("binance-futures")
 logger.setLevel(level=logging.INFO)
@@ -29,9 +33,9 @@ def collect_closes(closing_price, close_list):
     close_list.append(float(closing_price))
 
 
+    
 def calculate_rsi(candle_closes, length=RSI_PERIOD):
     return ta.RSI(numpy.array(_5_min_close), length)
-
 
 def calculate_sma(candle_closes, length):
     return ta.SMA(numpy.array(candle_closes), length)
@@ -55,36 +59,45 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
     elif  data_type == SubscribeMessageType.PAYLOAD:
         # PrintBasic.print_obj(event)
         tick_price = float(event.lastPrice)
-        POS_SIZE = round(user_session["balance"] / _5_min_close[-1] * 0.1, 2)
+        order_size = round(user_session["balance"] * POS_SIZE / _5_min_close[-1], 2)
         buy_stop_lvl = round(tick_price * 0.97, 2)
         sell_stop_lvl = round(tick_price * 0.97, 2)
-        print(tick_price)
+        # print(tick_price)
+        # print(user_session["in_position"])
         if user_session["in_position"] == False:
+            # if straight_buy(tick_price):
+            #     order = market_buy(SYMBOL, order_size)
+            #     print(order)
+            #     user_session["in_position"] = True
             if sma21_bull_buy(tick_price, rsi_5min, sma21_5min, ema200_15min):
-                order = market_buy(SYMBOL, POS_SIZE)
+                order = market_buy(SYMBOL, order_size)
                 print(order)
-                user_session["active_position"] = "+ "+POS_SIZE
-                buy_stop(SYMBOL, POS_SIZE, buy_stop_lvl)
+                user_session["active_position"] = "+ "+order_size
+                buy_stop(SYMBOL, order_size, buy_stop_lvl)
+                user_session["in_position"] = True
             if sma21_bear_sell(tick_price, rsi_5min, sma21_5min, ema200_15min):
-                order = market_sell(SYMBOL, POS_SIZE)
+                order = market_sell(SYMBOL, order_size)
                 print(order)
-                user_session["active_position"] = "- "+POS_SIZE
-                sell_stop(SYMBOL, POS_SIZE, sell_stop_lvl)
+                user_session["active_position"] = "- "+order_size
+                sell_stop(SYMBOL, order_size, sell_stop_lvl)
+                user_session["in_position"] = True
         if user_session["in_position"] == True:
             if sma21_bull_sell(rsi_5min):
                 order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1]) 
+                print(order)
             if sma21_bear_buy(rsi_5min):
                 order = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
+                print(order)
     else:
         print("Unknown Data:")
-    print()
+    # print()
 
 
 def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
     if data_type == SubscribeMessageType.RESPONSE:
             print("Event ID: ", event)
     elif  data_type == SubscribeMessageType.PAYLOAD:
-        print("5min alive!")
+        # print("5min alive!")
         if event.data.isClosed == "True":
             print("Event type: ", event.eventType)
             print("Event time: ", event.eventTime)
@@ -95,7 +108,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
             collect_closes(event.data.close, _5_min_close)
     else:
         print("Unknown Data:")
-    print()
+    # print()
 
 
 
@@ -103,7 +116,7 @@ def candle_callback_15min(data_type: 'SubscribeMessageType', event: 'any'):
     if data_type == SubscribeMessageType.RESPONSE:
             print("Event ID: ", event)
     elif  data_type == SubscribeMessageType.PAYLOAD:
-        print("15min alive!")
+        # print("15min alive!")
         if event.data.isClosed == "True":
             print("Event type: ", event.eventType)
             print("Event time: ", event.eventTime)
@@ -113,7 +126,7 @@ def candle_callback_15min(data_type: 'SubscribeMessageType', event: 'any'):
             collect_closes(event.data.close, _15_min_close)
     else:
         print("Unknown Data:")
-    print()
+    # print()
 
 
 def error(e: 'BinanceApiException'):

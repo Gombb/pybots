@@ -1,4 +1,4 @@
-
+import numpy
 #21sma5min
 
 
@@ -23,6 +23,6 @@ def sma21_bear_sell(tick_price, rsi, sma21, highTFema):
 
 
 def sma21_bear_buy(rsi):
-    if rsi <= 24:
+    if rsi[-1] <= 24:
         return True
 
