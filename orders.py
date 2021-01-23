@@ -34,3 +34,8 @@ def market_buy(symbol_ticker, quantity):
 def market_sell(symbol_ticker, quantity): 
     result = request_client.post_order(symbol=symbol_ticker, side=OrderSide.SELL, ordertype=OrderType.MARKET, quantity=quantity)
     return result
+
+
+def cancell_all_order(symbol_ticker):
+    result = request_client.cancel_all_orders(symbol=symbol_ticker)
+    return result
