@@ -18,7 +18,7 @@ RSI_PERIOD = 14
 SYMBOL = 'ETHUSDT'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
-POS_SIZE = 0.5
+POS_SIZE = 0.25
 
 
 logger = logging.getLogger("binance-futures")
@@ -59,16 +59,19 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
     elif  data_type == SubscribeMessageType.PAYLOAD:
         # PrintBasic.print_obj(event)
         tick_price = float(event.lastPrice)
-        order_size = round(user_session["balance"] * POS_SIZE / _5_min_close[-1], 2)
+        order_size = round(user_session["balance"] * POS_SIZE / _5_min_close[-1], 3)
         buy_stop_lvl = round(tick_price * 0.97, 2)
         sell_stop_lvl = round(tick_price * 0.97, 2)
         # print(tick_price)
+        # print(user_session)
         # print(user_session["in_position"])
         if user_session["in_position"] == False:
             # if straight_buy(tick_price):
             #     order = market_buy(SYMBOL, order_size)
             #     print(order)
+            #     print(order.origQty)
             #     user_session["in_position"] = True
+            #     user_session["active_position"] = "+ "+ str(order.origQty)
             if sma21_bull_buy(tick_price, rsi_5min, sma21_5min, ema200_15min):
                 order = market_buy(SYMBOL, order_size)
                 print(order)
@@ -83,10 +86,12 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                 user_session["in_position"] = True
         if user_session["in_position"] == True:
             if sma21_bull_sell(rsi_5min):
-                order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1]) 
+                order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
+                user_session["in_position"] = False 
                 print(order)
             if sma21_bear_buy(rsi_5min):
                 order = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
+                user_session["in_position"] = False
                 print(order)
     else:
         print("Unknown Data:")
@@ -98,7 +103,9 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
             print("Event ID: ", event)
     elif  data_type == SubscribeMessageType.PAYLOAD:
         # print("5min alive!")
+        
         if event.data.isClosed == "True":
+            print(user_session)
             print("Event type: ", event.eventType)
             print("Event time: ", event.eventTime)
             print("Symbol: ", event.symbol)
