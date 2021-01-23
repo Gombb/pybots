@@ -19,6 +19,8 @@ SYMBOL = 'ETHUSDT'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
 POS_SIZE = 0.25
+BUY_STOP_LVL = 0.97
+SELL_STOP_LVL = 1.03
 
 
 logger = logging.getLogger("binance-futures")
@@ -60,30 +62,28 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         # PrintBasic.print_obj(event)
         tick_price = float(event.lastPrice)
         order_size = round(user_session["balance"] * POS_SIZE / _5_min_close[-1], 3)
-        buy_stop_lvl = round(tick_price * 0.97, 2)
-        sell_stop_lvl = round(tick_price * 0.97, 2)
+        
         # print(tick_price)
         # print(user_session)
-        # print(user_session["in_position"])
+        print(user_session["in_position"])
         if user_session["in_position"] == False:
             # if straight_buy(tick_price):
             #     order = market_buy(SYMBOL, order_size)
-            #     print(order)
-            #     print(order.origQty)
             #     user_session["in_position"] = True
             #     user_session["active_position"] = "+ "+ str(order.origQty)
+            #     buy_stop(SYMBOL, user_session["active_position"].split(" ")[1], round(tick_price * BUY_STOP_LVL, 2))
             if sma21_bull_buy(tick_price, rsi_5min, sma21_5min, ema200_15min):
                 order = market_buy(SYMBOL, order_size)
-                print(order)
-                user_session["active_position"] = "+ " + str(order.origQty)
-                buy_stop(SYMBOL, order.origQty, buy_stop_lvl)
                 user_session["in_position"] = True
+                user_session["active_position"] = "+ " + str(order.origQty)
+                buy_stop(SYMBOL, str(order.origQty), round(tick_price * BUY_STOP_LVL, 2))
+                
             if sma21_bear_sell(tick_price, rsi_5min, sma21_5min, ema200_15min):
                 order = market_sell(SYMBOL, order_size)
-                print(order)
-                user_session["active_position"] = "- "+ str(order.origQty)
-                sell_stop(SYMBOL, order.origQty, sell_stop_lvl)
                 user_session["in_position"] = True
+                user_session["active_position"] = "- "+ str(order.origQty)
+                sell_stop(SYMBOL, str(order.origQty), round(tick_price * SELL_STOP_LVL, 2))
+                
         if user_session["in_position"] == True:
             if sma21_bull_sell(rsi_5min):
                 order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])

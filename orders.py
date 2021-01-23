@@ -21,6 +21,7 @@ def sell_stop(symbol_ticker, quantity, stop_price):
 
 
 def buy_stop(symbol_ticker, quantity, stop_price):
+    print(quantity)
     result = request_client.post_order(symbol=symbol_ticker, side=OrderSide.SELL, ordertype=OrderType.STOP_MARKET, quantity=quantity, stopPrice=stop_price, closePosition=True)
     return result
 
