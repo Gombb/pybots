@@ -6,7 +6,7 @@ from binance_f.base.printobject import *
 from config import *
 from time import time
 
-SYMBOL = "ethusdt"
+SYMBOL = "linkusdt"
 CURRENT_TIME = int(time() * 1000)
 request_client = RequestClient(api_key=API_KEY, secret_key=API_SECRET, url="https://fapi.binance.com")
 
