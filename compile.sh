@@ -14,10 +14,11 @@ sudo ./configure
 sudo make
 sudo make install
 pip3 install ta-lib
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 pip3 install websocket-client
 pip3 install apscheduler
 
-git clone https://github.com/Binance-docs/Binance_Futures_python.git
+sudo git clone https://github.com/Binance-docs/Binance_Futures_python.git
 cd Binance_Futures_python
 python3 setup.py.install
 
