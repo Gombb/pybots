@@ -7,22 +7,50 @@ def straight_buy(tick_price):
         return True
 
 
-def sma21_bull_buy(tick_price, rsi, sma21, highTFema):
-    if rsi[-1] >= 48 and tick_price <= sma21[-1] and sma21[-2] > highTFema[-2]:
+def sma21_bull_buy(tick_price, rsi, sma21, highTFema):    
+    rsi_is_bull = rsi[-1] >= 48
+    low_crossed_sma = tick_price <= sma21[-1]
+    bulltrend = sma21[-2] > highTFema[-2]
+    # print(f'rsi is bull: {rsi_is_bull}')
+    # print(f'low crossed sma: {price_crossed_sma}')
+    # print(f'bulltrend: {bulltrend}')    
+    if rsi_is_bull and low_crossed_sma and bulltrend:
         return True
+    else: 
+        return False
 
 
 def sma21_bull_sell(rsi):
     if rsi[-1] >= 78:
         return True
+    else:
+        return False
 
 
 def sma21_bear_sell(tick_price, rsi, sma21, highTFema):
-    if rsi[-1] <= 52 and tick_price >= sma21[-1] and sma21[-2] < highTFema[-2]:
+    rsi_is_bear = rsi[-1] <= 52
+    high_crossed_sma = tick_price >= sma21[-1]
+    beartrend = sma21[-2] < highTFema[-2]
+    # print("________")
+    # print(f'rsi is bear: {rsi_is_bear}')
+    # print(f'high crossed sma: {price_crossed_sma}')
+    # print(f'beartrend: {beartrend}')
+    if rsi_is_bear and high_crossed_sma and beartrend:
         return True
+    else:
+        return False
 
 
 def sma21_bear_buy(rsi):
     if rsi[-1] <= 24:
         return True
 
+
+
+# tick_price = 32500
+# rsi = [38]
+# sma21 = [32427, 32436]
+# highTFema=[32555, 32666]
+
+# print(sma21_bull_buy(tick_price, rsi, sma21, highTFema))
+# print(sma21_bear_sell(tick_price, rsi, sma21, highTFema))
