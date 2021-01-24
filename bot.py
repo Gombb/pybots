@@ -15,12 +15,14 @@ from orders import *
 
 
 RSI_PERIOD = 14
+SMA_5MIN_PERIOD = 21
+EMA_15MIN_PERIOD = 50
 SYMBOL = 'LINKUSDT'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
 POS_SIZE = 0.1
-BUY_STOP_LVL = 0.97
-SELL_STOP_LVL = 1.03
+BUY_STOP_LVL = 0.96
+SELL_STOP_LVL = 1.04
 
 
 logger = logging.getLogger("binance-futures")
@@ -165,8 +167,8 @@ pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_clos
 
 
 rsi_5min = calculate_rsi(_5_min_close)
-sma21_5min = calculate_sma(_5_min_close, 21)
-ema200_15min = calculate_ema(_15_min_close, 200)
+sma21_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
+ema200_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
 
 
 sub_client.subscribe_symbol_ticker_event("linkusdt", ticker_callback, error)
