@@ -30,10 +30,17 @@ handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s -
 logger.addHandler(handler)
 sub_client = SubscriptionClient(api_key=API_KEY, secret_key=API_SECRET, uri="wss://fstream.binance.com/ws")
 
+def check_positon(symbol_ticker):
+    global user_session
+    result = req_user_data.request_user_position()
+    for ele in result:
+        if ele.symbol == symbol_ticker and ele.positionAmt:
+                user_session["active_position"] = "0"
+                user_session["in_position"] = False
+
 
 def collect_closes(closing_price, close_list):
     close_list.append(float(closing_price))
-
 
     
 def calculate_rsi(candle_closes, length=RSI_PERIOD):
@@ -87,13 +94,15 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         if user_session["in_position"] == True:
             if sma21_bull_sell(rsi_5min):
                 sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
-                user_session["in_position"] = False 
+                user_session["in_position"] = False
+                user_session["active_position"] = 0 
                 cancel_order = cancell_all_order(SYMBOL)    
                 PrintBasic.print_obj(sell_order)
                 PrintBasic.print_obj(cancel_order)
             if sma21_bear_buy(rsi_5min):
                 buy_order = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
                 user_session["in_position"] = False
+                user_session["active_position"] = 0
                 cancel_order = cancell_all_order(SYMBOL)
                 PrintBasic.print_obj(buy_order)
                 PrintBasic.print_obj(cancel_order)
@@ -114,7 +123,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
             print("Symbol: ", event.symbol)
             print("Data:")
             
-            
+            check_positon(SYMBOL)
             collect_closes(event.data.close, _5_min_close)
     else:
         print("Unknown Data:")
