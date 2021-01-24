@@ -8,7 +8,7 @@ def straight_buy(tick_price):
 
 
 def sma21_bull_buy(tick_price, rsi, sma21, highTFema):
-    if rsi[-1] >= 48 and tick_price <= sma21[-1] and sma21[-2] >= highTFema[-2]:
+    if rsi[-1] >= 48 and tick_price <= sma21[-1] and sma21[-2] > highTFema[-2]:
         return True
 
 
@@ -18,7 +18,7 @@ def sma21_bull_sell(rsi):
 
 
 def sma21_bear_sell(tick_price, rsi, sma21, highTFema):
-    if rsi[-1] <= 52 and tick_price >= sma21[-1] and sma21[-2] <= highTFema[-2]:
+    if rsi[-1] <= 52 and tick_price >= sma21[-1] and sma21[-2] < highTFema[-2]:
         return True
 
 
