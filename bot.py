@@ -15,10 +15,10 @@ from orders import *
 
 
 RSI_PERIOD = 14
-SYMBOL = 'linkusdt'
+SYMBOL = 'LINKUSDT'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
-POS_SIZE = 1
+POS_SIZE = 0.1
 BUY_STOP_LVL = 0.97
 SELL_STOP_LVL = 1.03
 
@@ -34,10 +34,9 @@ def check_positon(symbol_ticker):
     global user_session
     result = req_user_data.request_user_position()
     for ele in result:
-        if ele.symbol == symbol_ticker and ele.positionAmt:
+        if ele.symbol == symbol_ticker and ele.positionAmt == 0.0:
                 user_session["active_position"] = "0"
                 user_session["in_position"] = False
-
 
 def collect_closes(closing_price, close_list):
     close_list.append(float(closing_price))
@@ -73,6 +72,8 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         # sell_stop_price = str(round(tick_price * SELL_STOP_LVL, 2))
         print(tick_price)
         print(user_session)
+        print(f'5min close {len(_5_min_close)} long ')
+        print(f'15min close {len(_15_min_close)} long')
         if user_session["in_position"] == False:
             # if straight_buy(tick_price):
             #     order = market_buy(SYMBOL, order_size)
@@ -159,8 +160,8 @@ _5_min_close = []
 _15_min_close = []
 
 
-pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "5m", _5_min_close)
-pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS, CURRENT_TIME, "15m", _15_min_close)
+pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/9, CURRENT_TIME, "5m", _5_min_close)
+pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_close)
 
 
 rsi_5min = calculate_rsi(_5_min_close)
