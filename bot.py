@@ -81,8 +81,8 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         # sell_stop_price = str(round(tick_price * SELL_STOP_LVL, 2))
         print(tick_price)
         print(user_session)
-        print(f'5min close {len(_5_min_close)} long ')
-        print(f'15min close {len(_15_min_close)} long')
+        print(f'5min RSI {rsi_5min}')
+        # print(f'15min close {len(_15_min_close)} long')
         if user_session["in_position"] == False:
             # if straight_buy(tick_price):
             #     order = market_buy(SYMBOL, order_size)
@@ -94,7 +94,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                 user_session["in_position"] = True
                 user_session["active_position"] = "+ " + str(order.origQty)
                 buy_stop(SYMBOL, str(order.origQty), str(round(tick_price * BUY_STOP_LVL, 3)))
-                
+
             if sma21_bear_sell(tick_price, rsi_5min, sma21_5min, ema200_15min) == True:
                 order = market_sell(SYMBOL, order_size)
                 user_session["in_position"] = True
