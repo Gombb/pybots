@@ -83,8 +83,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         print(user_session)
         rsi_5min = calculate_rsi(_5_min_close)
         sma21_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
-        ema200_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
-
+        ema200_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)""
         print(f'5min RSI {rsi_5min[-1]} || len  {len(rsi_5min)}')
         print(f'sma21 {sma21_5min[-1]} ||  len  {len(sma21_5min)}')
         print(f'ema {ema200_15min[-1]} ||  len  {len(ema200_15min)}')
@@ -100,7 +99,6 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                 user_session["in_position"] = True
                 user_session["active_position"] = "+ " + str(order.origQty)
                 buy_stop(SYMBOL, str(order.origQty), str(round(tick_price * BUY_STOP_LVL, 3)))
-                
             if sma21_bear_sell(tick_price, rsi_5min, sma21_5min, ema200_15min) == True:
                 order = market_sell(SYMBOL, order_size)
                 user_session["in_position"] = True
@@ -143,7 +141,11 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
     elif  data_type == SubscribeMessageType.PAYLOAD:
         # PrintBasic.print_obj(event.data)
         if event.data.isClosed == True:
-            print(user_session)
+            print(_5_min_close)
+            print(_15_min_close)
+            print(calculate_rsi(_5_min_close))
+            print(calculate_sma(_5_min_close, SMA_5MIN_PERIOD))
+            print(calculate_ema(_15_min_close, EMA_15MIN_PERIOD))
             print("Event type: ", event.eventType)
             print("Event time: ", event.eventTime)
             print("Symbol: ", event.symbol)
