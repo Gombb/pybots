@@ -81,6 +81,10 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         # sell_stop_price = str(round(tick_price * SELL_STOP_LVL, 2))
         print(tick_price)
         print(user_session)
+        rsi_5min = calculate_rsi(_5_min_close)
+        sma21_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
+        ema200_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
+
         print(f'5min RSI {rsi_5min[-1]} || len  {len(rsi_5min)}')
         print(f'sma21 {sma21_5min[-1]} ||  len  {len(sma21_5min)}')
         print(f'ema {ema200_15min[-1]} ||  len  {len(ema200_15min)}')
@@ -186,9 +190,6 @@ pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/9, CURRENT_TIME, "5m", _5_min_close)
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_close)
 
 
-rsi_5min = calculate_rsi(_5_min_close)
-sma21_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
-ema200_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
 
 sub_client.subscribe_symbol_ticker_event("linkusdt", ticker_callback, error)
 sub_client.subscribe_candlestick_event("linkusdt", CandlestickInterval.MIN5, candle_callback_5min, error)
