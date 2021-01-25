@@ -37,8 +37,12 @@ def check_positon(symbol_ticker):
     result = req_user_data.request_user_position()
     for ele in result:
         if ele.symbol == symbol_ticker and ele.positionAmt == 0.0:
-                user_session["active_position"] = "0"
-                user_session["in_position"] = False
+            user_session["active_position"] = "0"
+            user_session["in_position"] = False
+        if ele.symbol == symbol_ticker and ele.positionAmt != 0.0:
+            user_session["active_position"] = "+ "+str(ele.positionAmt)
+            user_session["in_position"] = True
+
 
 def collect_closes(closing_price, close_list):
     close_list.append(float(closing_price))
@@ -109,6 +113,15 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                 cancel_order = cancell_all_order(SYMBOL)
                 PrintBasic.print_obj(buy_order)
                 PrintBasic.print_obj(cancel_order)
+            # if test_TP(rsi_5min):
+            #     print("true")
+            #     sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
+            #     user_session["in_position"] = False
+            #     user_session["active_position"] = 0 
+            #     cancel_order = cancell_all_order(SYMBOL)    
+            #     PrintBasic.print_obj(sell_order)
+            #     PrintBasic.print_obj(cancel_order)
+                
     else:
         print("Unknown Data:")
     print()
@@ -169,7 +182,6 @@ pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_clos
 rsi_5min = calculate_rsi(_5_min_close)
 sma21_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
 ema200_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
-
 
 sub_client.subscribe_symbol_ticker_event("linkusdt", ticker_callback, error)
 sub_client.subscribe_candlestick_event("linkusdt", CandlestickInterval.MIN5, candle_callback_5min, error)

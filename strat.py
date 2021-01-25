@@ -21,7 +21,7 @@ def sma21_bull_buy(tick_price, rsi, sma21, highTFema):
 
 
 def sma21_bull_sell(rsi):
-    if rsi[-1] >= 78:
+    if rsi[-1] >= 65:
         return True
     else:
         return False
@@ -42,15 +42,18 @@ def sma21_bear_sell(tick_price, rsi, sma21, highTFema):
 
 
 def sma21_bear_buy(rsi):
-    if rsi[-1] <= 24:
+    if rsi[-1] <= 35:
         return True
 
-
+def test_TP(rsi):
+    if rsi[-1] > 25:
+        return True 
 
 # tick_price = 32500
 # rsi = [38]
 # sma21 = [32427, 32436]
 # highTFema=[32555, 32666]
 
+# print(sma21_bull_sell([80.25]))
 # print(sma21_bull_buy(tick_price, rsi, sma21, highTFema))
 # print(sma21_bear_sell(tick_price, rsi, sma21, highTFema))

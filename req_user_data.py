@@ -21,4 +21,4 @@ res = request_user_position()
 for i in res:
     if i.symbol == "LINKUSDT":
         PrintBasic.print_obj(i)
-        print(type(i.positionAmt))
+        print(type(i))
