@@ -83,7 +83,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         print(user_session)
         rsi_5min = calculate_rsi(_5_min_close)
         sma21_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
-        ema200_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)""
+        ema200_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
         print(f'5min RSI {rsi_5min[-1]} || len  {len(rsi_5min)}')
         print(f'sma21 {sma21_5min[-1]} ||  len  {len(sma21_5min)}')
         print(f'ema {ema200_15min[-1]} ||  len  {len(ema200_15min)}')
