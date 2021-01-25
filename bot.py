@@ -95,12 +95,13 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                 user_session["active_position"] = "+ " + str(order.origQty)
                 buy_stop(SYMBOL, str(order.origQty), str(round(tick_price * BUY_STOP_LVL, 3)))
                 
-            if sma21_bear_sell(tick_price, rsi_5min, sma21_5min, ema200_15min):
+            if sma21_bear_sell(tick_price, rsi_5min, sma21_5min, ema200_15min) == True:
                 order = market_sell(SYMBOL, order_size)
                 user_session["in_position"] = True
                 user_session["active_position"] = "- "+ str(order.origQty)
                 sell_stop(SYMBOL, str(order.origQty), str(round(tick_price * SELL_STOP_LVL, 3)))
-                
+            
+
         if user_session["in_position"] == True:
             if sma21_bull_sell(rsi_5min):
                 sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
