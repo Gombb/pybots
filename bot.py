@@ -44,7 +44,7 @@ def check_positon(symbol_ticker):
             user_session["in_position"] = True
         if ele.symbol == symbol_ticker and ele.positionAmt < 0.0:
             user_session["in_position"] = True
-            user_session["active_position"] = "- " + str(ele.positionAmt[1]) 
+            user_session["active_position"] = "- " + str(ele.positionAmt).split("-")[1] 
 
 
 def collect_closes(closing_price, close_list):
