@@ -82,8 +82,8 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         print(tick_price)
         print(user_session)
         rsi_5min = calculate_rsi(_5_min_close)
-        sma21_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
-        ema200_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
+        sma_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
+        ema_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
         print(f'5min RSI {rsi_5min[-1]} || len  {len(rsi_5min)}')
         print(f'sma21 {sma21_5min[-1]} ||  len  {len(sma21_5min)}')
         print(f'ema {ema200_15min[-1]} ||  len  {len(ema200_15min)}')
@@ -94,12 +94,12 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
             #     user_session["in_position"] = True
             #     user_session["active_position"] = "+ "+ str(order.origQty)
             #     buy_stop(SYMBOL, user_session["active_position"].split(" ")[1], str(round(tick_price * BUY_STOP_LVL, 3)))
-            if sma21_bull_buy(tick_price, rsi_5min, sma21_5min, ema200_15min):
+            if sma21_bull_buy(tick_price, rsi_5min, sma_5min, ema_15min):
                 order = market_buy(SYMBOL, order_size)
                 user_session["in_position"] = True
                 user_session["active_position"] = "+ " + str(order.origQty)
                 buy_stop(SYMBOL, str(order.origQty), str(round(tick_price * BUY_STOP_LVL, 3)))
-            if sma21_bear_sell(tick_price, rsi_5min, sma21_5min, ema200_15min) == True:
+            if sma21_bear_sell(tick_price, rsi_5min, sma_5min, ema_15min) == True:
                 order = market_sell(SYMBOL, order_size)
                 user_session["in_position"] = True
                 user_session["active_position"] = "- "+ str(order.origQty)
@@ -107,6 +107,22 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
             
 
         if user_session["in_position"] == True:
+            if user_session["active_position"].split(" ")[0] == "+":
+                if sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1] and sma_5min[-3] < ema_15min[-1]:
+                    sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
+                    user_session["in_position"] = False
+                    user_session["active_position"] = 0 
+                    cancel_order = cancell_all_order(SYMBOL)    
+                    PrintBasic.print_obj(sell_order)
+                    PrintBasic.print_obj(cancel_order)
+            if user_session["active_position"].split(" ")[0] == "-":  
+                if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1] and sma_5min[-3] > ema_15min[-1]:
+                    buy_order = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
+                    user_session["in_position"] = False
+                    user_session["active_position"] = 0
+                    cancel_order = cancell_all_order(SYMBOL)
+                    PrintBasic.print_obj(buy_order)
+                    PrintBasic.print_obj(cancel_order)
             if sma21_bull_sell(rsi_5min):
                 sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
                 user_session["in_position"] = False
