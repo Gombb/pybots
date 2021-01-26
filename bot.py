@@ -113,7 +113,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                     user_session["in_position"] = False
                     user_session["active_position"] = 0 
                     cancel_order = cancell_all_order(SYMBOL)    
-                    PrintBasic.print_obj(sell_order)gi
+                    PrintBasic.print_obj(sell_order)
                     PrintBasic.print_obj(cancel_order)
             if user_session["active_position"].split(" ")[0] == "-" and tick_price > sma_5min[-1]:  
                 if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1] and sma_5min[-3] > ema_15min[-1]:
