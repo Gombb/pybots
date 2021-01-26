@@ -107,15 +107,15 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
             
 
         if user_session["in_position"] == True:
-            if user_session["active_position"].split(" ")[0] == "+":
+            if user_session["active_position"].split(" ")[0] == "+" and tick_price < sma_5min[-1]:
                 if sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1] and sma_5min[-3] < ema_15min[-1]:
                     sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
                     user_session["in_position"] = False
                     user_session["active_position"] = 0 
                     cancel_order = cancell_all_order(SYMBOL)    
-                    PrintBasic.print_obj(sell_order)
+                    PrintBasic.print_obj(sell_order)gi
                     PrintBasic.print_obj(cancel_order)
-            if user_session["active_position"].split(" ")[0] == "-":  
+            if user_session["active_position"].split(" ")[0] == "-" and tick_price > sma_5min[-1]:  
                 if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1] and sma_5min[-3] > ema_15min[-1]:
                     buy_order = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
                     user_session["in_position"] = False
@@ -206,7 +206,6 @@ _15_min_close = []
 
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/9, CURRENT_TIME, "5m", _5_min_close)
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_close)
-
 
 
 sub_client.subscribe_symbol_ticker_event("linkusdt", ticker_callback, error)
