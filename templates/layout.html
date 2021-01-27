@@ -12,6 +12,30 @@
 
 </head>
 <body>
+    {% block navbar %}
+    <nav class="navbar navbar-expand-lg navbar shadow-sm">
+      <a class="navbar-brand" href="{{ url_for('index') }}">askmoi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="{% block link_home %}nav-item{% endblock %}">
+                <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
+            </li>
+            <li class="{% block link_log %}nav-item{% endblock %}">
+                <a class="nav-link" href="/log">All questions</a>
+            </li>
+            <li class="{% block link_addq %}nav-item{% endblock %}">
+                <a class="nav-link" href="/add-question">Ask something</a>
+            </li>
+            <li class="{% block link_login %}nav-item{% endblock %}">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+        </ul>
+      </div>
+    </nav>
+    {% endblock %}
     {% if session["status"] == "logged in" %}
         {% block content %}
         {% endblock %}

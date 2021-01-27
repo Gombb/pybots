@@ -9,7 +9,7 @@ let stratBox = {
     },
     fillTheBox: function (data, side) {
         stratHTML = `<tbody>
-                        <tr>
+                        <tr class="table-warning">
                             <td>${data[0].rsi}</td>
                             <td>${data[0].sma}</td>
                             <td>${data[0].trend}</td>
@@ -37,4 +37,4 @@ let stratBox = {
     },
 }
 stratBox.init();
-setInterval(stratBox.init, 60000);
+setInterval(stratBox.init, 30000);
