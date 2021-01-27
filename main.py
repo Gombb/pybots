@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_bcrypt import Bcrypt
 import queries
+import bot
+
 
 app = Flask(__name__, template_folder="templates")
 bcrypt = Bcrypt(app)
@@ -12,6 +14,14 @@ def index():
     print(session)
     return render_template("index.html")
 
+
+@app.route("/bot-control/<status>/")
+def bot_control(status):
+    if status == "on":
+        bot.init()
+    if status == "off":
+        bot.shutdown()
+    return redirect("/")
 
 @app.route("/login", methods=["POST"])
 def login():
