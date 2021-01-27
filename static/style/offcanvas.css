@@ -1,0 +1,14 @@
+.container {
+    padding: 25px;
+    margin: 50px;
+    background-color: salmon;
+}
+
+#inputPassword {
+    background-color: darkcyan;
+    width: 350px;
+}
+
+body {
+    background-color: darkcyan;
+}
