@@ -99,10 +99,10 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                 user_session["in_position"] = True
                 user_session["active_position"] = "+ " + str(order.origQty)
                 buy_stop(SYMBOL, str(order.origQty), str(round(tick_price * BUY_STOP_LVL, 3)))
-            if sma21_bear_sell(tick_price, rsi_5min, sma_5min, ema_15min) == True:
+            if sma21_bear_sell(tick_price, rsi_5min, sma_5min, ema_15min):
                 order = market_sell(SYMBOL, order_size)
                 user_session["in_position"] = True
-                user_session["active_position"] = "- "+ str(order.origQty)
+                user_session["active_position"] = "- " + str(order.origQty)
                 sell_stop(SYMBOL, str(order.origQty), str(round(tick_price * SELL_STOP_LVL, 3)))
 
 
@@ -153,8 +153,8 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
 
 def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
     if data_type == SubscribeMessageType.RESPONSE:
-            print("Event ID: ", event)
-    elif  data_type == SubscribeMessageType.PAYLOAD:
+        print("Event ID: ", event)
+    elif data_type == SubscribeMessageType.PAYLOAD:
         # PrintBasic.print_obj(event.data)
         if event.data.isClosed == True:
             print(_5_min_close)

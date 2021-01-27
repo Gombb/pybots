@@ -1,9 +1,32 @@
 {% extends "layout.html" %}
+{% block head_js %}
+    <script defer src={{ url_for("static", filename="js/stratStatusBox.js") }}></script>
+{% endblock %}
 {% block content %}
     <div class="container" id="stratOverviewBox">
         <div class="row">
             <div class="col">
+                <table>
+                    <tr id="bullStratBoxHead">
+                        <th>RSI is Bullish</th>
+                        <th>Low swept SMA</th>
+                        <th>Bull trend</th>
+                    </tr>
+                    <tr>
 
+                    </tr>
+
+                </table>
+                <table>
+                    <tr id="bearStratBoxHead">
+                        <th>RSI is Bearish</th>
+                        <th>High swept SMA</th>
+                        <th>Bear trend</th>
+                    </tr>
+                    <tr>
+
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
