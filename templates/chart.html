@@ -3,6 +3,7 @@
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <script type="module" defer src={{ url_for("static", filename="js/chart.js") }}></script>
     <script defer src={{ url_for("static", filename="js/stratStatusBox.js") }}></script>
+    <script type="module" defer src={{ url_for("static", filename="js/userStream.js") }}></script>
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -13,7 +14,7 @@
                 </div>
             </div>
             <div class="col">
-                <table class="table" id="ohlcTable">
+                <table class="table table-sm" id="ohlcTable">
                     <thead>
                         <th>OPEN</th>
                         <th>HIGH</th>

@@ -12,9 +12,14 @@ def request_user_balance():
     return {"balance": result[0].balance, "asset": result[0].asset}
 
 
-
 def request_user_position():
     result = request_client.get_position()
+    return result
+
+
+def request_trading_stats(symbol):
+    result = request_client.get_account_trades(symbol)
+    PrintMix.print_data(result)
     return result
 
 # res = request_user_position()

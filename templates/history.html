@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div container>
+        <div class="row">
+            <div class="col">
+                <table class="table table-dark table-hover" id="historical-table">
+                    <thead>
+                        <th>id</th>
+                        <th>isMaker</th>
+                        <th>time</th>
+                        <th>side</th>
+                        <th>price</th>
+                        <th>quantity</th>
+                        <th>PnL</th>
+                        <th>commission</th>
+                    </thead>
+                    <tbody>
+                        {% for ele in historical_data  | sort(attribute="time", reverse=True) %}
+                            <tr>
+                                <td>{{ ele.id }}</td>
+                                <td>{{ ele.isMaker }}</td>
+                                <td>{{ ele.time | datetime}}</td>
+                                <td>{{ ele.side }}</td>
+                                <td>{{ ele.price }} $</td>
+                                <td>{{ ele.qty }}</td>
+                                <td>{{ ele.realizedPnl }} $</td>
+                                <td>{{ ele.commission }} $</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

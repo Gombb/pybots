@@ -38,4 +38,4 @@ let stratBox = {
 }
 
 stratBox.init();
-//setInterval(stratBox.init, 30000);
+setInterval(stratBox.init, 60000);

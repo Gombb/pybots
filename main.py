@@ -3,13 +3,20 @@ from flask_bcrypt import Bcrypt
 import queries
 import data_manager
 import req_historical
+import req_user_data
 import bot
 import os
 import time
-
+from datetime import datetime
 app = Flask(__name__, template_folder="templates")
 bcrypt = Bcrypt(app)
 app.secret_key = b'\xe3\r\x8b<\xa1\xc4L2S\x9c\xc4\xbew\x03N\xf0'
+
+
+@app.template_filter('datetime')
+def datetime_from_timestamp(ts):
+    ts /= 1000
+    return datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 
 @app.route('/')
@@ -30,6 +37,12 @@ def get_cache_strat(ele, side):
         if side == "bear":
             result = data_manager.read_csv(data_manager.STRAT_BEAR_PATH)
     return jsonify(result)
+
+
+@app.route("/trade-history")
+def trade_history():
+    symbol_history = req_user_data.request_trading_stats("LINKUSDT")
+    return render_template("history.html", historical_data=symbol_history)
 
 
 @app.route("/get-historical/<timeframe>/")

@@ -8,7 +8,6 @@ let chart = {
         })
     },
     preFill(data) {
-      console.log(data);
       chart.dataCache = data;
       candleSeries.setData(data);
     },
@@ -85,3 +84,20 @@ chartLight.subscribeCrosshairMove(param => {
 		chart.plotOHLC(param.seriesPrices.get(candleSeries))
 	}
   })
+
+let binanceSocket = new WebSocket("wss://fstream.binance.com/ws/linkusdt@kline_5m");
+
+binanceSocket.onmessage = function (event) {
+	let message = JSON.parse(event.data);
+
+	let candlestick = message.k;
+
+
+	candleSeries.update({
+		time: candlestick.t / 1000,
+		open: candlestick.o,
+		high: candlestick.h,
+		low: candlestick.l,
+		close: candlestick.c
+	})
+}
