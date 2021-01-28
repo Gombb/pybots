@@ -101,7 +101,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         sma_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
         ema_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
         print(f'last RSI value ||  {rsi_5min[-1]}')
-        print(f'last SMA value ||  {sma_5min[-1]}')
+        print(f'last SMA value || [-1] {sma_5min[-1]} || [-2] {sma_5min[-2]} || [-3] {sma_5min[-3]}')
         print(f'last EMA value ||  {ema_15min[-1]}')
         if user_session["in_position"] == False:
             # if straight_buy(tick_price):
