@@ -11,6 +11,7 @@ import req_historical, req_user_data, data_manager
 from strat import *
 from config import *
 from orders import *
+import datetime
 
 
 
@@ -78,7 +79,7 @@ def swap_unix_to_date(unix_value, mode="mili"):
 
 
 def save_trades_data(side, strat, exec_prirce, quantity):
-    existing_data = data_manager.read_csv()
+    existing_data = data_manager.read_csv(data_manager.TRADE_HISTORY_PATH)
     current_time = swap_unix_to_date(CURRENT_TIME)
     current_data = {"time": current_time, "side": side, "strat": strat, "exec_price": exec_prirce, "quantity": quantity}
     existing_data.append(current_data)
