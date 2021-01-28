@@ -119,7 +119,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                 buy_stop(SYMBOL, str(order.origQty), str(round(tick_price * BUY_STOP_LVL, 3)))
             if sma21_bear_sell(tick_price, rsi_5min, sma_5min, ema_15min) == True:
                 order = market_sell(SYMBOL, order_size)
-                save_trades_data("bear", "sma21_entry", tick_price, orderOrigQty)
+                save_trades_data("bear", "sma21_entry", tick_price, order.origQty)
                 user_session["in_position"] = True
                 user_session["active_position"] = "- "+ str(order.origQty)
                 sell_stop(SYMBOL, str(order.origQty), str(round(tick_price * SELL_STOP_LVL, 3)))
@@ -160,15 +160,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                 cancel_order = cancell_all_order(SYMBOL)
                 PrintBasic.print_obj(buy_order)
                 PrintBasic.print_obj(cancel_order)
-            # if test_TP(rsi_5min):
-            #     print("true")
-            #     sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
-            #     user_session["in_position"] = False
-            #     user_session["active_position"] = 0 
-            #     cancel_order = cancell_all_order(SYMBOL)    
-            #     PrintBasic.print_obj(sell_order)
-            #     PrintBasic.print_obj(cancel_order)
-                
+        
     else:
         print("Unknown Data:")
     print()
