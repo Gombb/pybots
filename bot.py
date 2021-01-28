@@ -100,10 +100,9 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         rsi_5min = calculate_rsi(_5_min_close)
         sma_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
         ema_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
-        print(f'5min RSI {rsi_5min[-1]} || len  {len(rsi_5min)}')
-        print(f'sma21 {sma_5min[-1]} ||  len  {len(sma_5min)}')
-        print(f'ema {ema_15min[-1]} ||  len  {len(ema_15min)}')
-        # print(f'15min close {len(_15_min_close)} long')
+        print(f'last RSI value ||  {rsi_5min[-1]}')
+        print(f'last SMA value ||  {sma_5min[-1]}')
+        print(f'last EMA value ||  {ema_15min[-1]}')
         if user_session["in_position"] == False:
             # if straight_buy(tick_price):
             #     order = market_buy(SYMBOL, order_size)
@@ -130,7 +129,6 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                     sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
                     save_trades_data("bull", "sma21_backcross_exit", tick_price, sell_order.origQty)
                     user_session["in_position"] = False
-                    data_manager.
                     user_session["active_position"] = 0 
                     cancel_order = cancell_all_order(SYMBOL)    
                     PrintBasic.print_obj(sell_order)

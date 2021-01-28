@@ -23,3 +23,8 @@ def request_user_position():
 #         PrintBasic.print_obj(i)
 #         print(type(i))
 
+
+def request_trading_stats():    
+    result = request_client.get_account_trades(symbol="LINKUSDT")
+    PrintMix.print_data(result)
+    
