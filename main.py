@@ -2,9 +2,10 @@ from flask import Flask, render_template, request, redirect, session, jsonify
 from flask_bcrypt import Bcrypt
 import queries
 import data_manager
+import req_historical
 import bot
 import os
-
+import time
 
 app = Flask(__name__, template_folder="templates")
 bcrypt = Bcrypt(app)
@@ -13,8 +14,12 @@ app.secret_key = b'\xe3\r\x8b<\xa1\xc4L2S\x9c\xc4\xbew\x03N\xf0'
 
 @app.route('/')
 def index():
-    print(session)
     return render_template("index.html")
+
+
+@app.route("/chart")
+def chart_page():
+    return render_template("chart.html")
 
 
 @app.route("/cache/<ele>/<side>/")
@@ -24,8 +29,23 @@ def get_cache_strat(ele, side):
             result = data_manager.read_csv(data_manager.STRAT_BULL_PATH)
         if side == "bear":
             result = data_manager.read_csv(data_manager.STRAT_BEAR_PATH)
-    print(result)
     return jsonify(result)
+
+
+@app.route("/get-historical/<timeframe>/")
+def get_historical(timeframe):
+    current_time = int(time.time() * 1000)
+    unix_9days = 691200000
+    if timeframe == "5m":
+        time_int = unix_9days / 9
+    else:
+        time_int = unix_9days
+    result = req_historical.get_historical_data(current_time - time_int, current_time, timeframe)
+    json_like = []
+    for ele in result:
+        dict_temp = {"open": ele.open, "high": ele.high, "low": ele.low, "close": ele.close, "time": ele.openTime / 1000}
+        json_like.append(dict_temp)
+    return jsonify(json_like)
 
 
 @app.route("/bot-control/<status>/")
@@ -35,6 +55,7 @@ def bot_control(status):
     if status == "off":
         bot.shutdown()
     return redirect("/")
+
 
 @app.route("/login", methods=["POST"])
 def login():

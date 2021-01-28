@@ -36,5 +36,6 @@ let stratBox = {
             .then(json_response => callback(json_response));
     },
 }
+
 stratBox.init();
-setInterval(stratBox.init, 30000);
+//setInterval(stratBox.init, 30000);

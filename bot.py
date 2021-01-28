@@ -102,13 +102,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         print(f'5min RSI {rsi_5min[-1]} || len  {len(rsi_5min)}')
         print(f'sma21 {sma_5min[-1]} ||  len  {len(sma_5min)}')
         print(f'ema {ema_15min[-1]} ||  len  {len(ema_15min)}')
-        # print(f'15min close {len(_15_min_close)} long')
         if user_session["in_position"] == False:
-            # if straight_buy(tick_price):
-            #     order = market_buy(SYMBOL, order_size)
-            #     user_session["in_position"] = True
-            #     user_session["active_position"] = "+ "+ str(order.origQty)
-            #     buy_stop(SYMBOL, user_session["active_position"].split(" ")[1], str(round(tick_price * BUY_STOP_LVL, 3)))
             if sma21_bull_buy(tick_price, rsi_5min, sma_5min, ema_15min):
                 order = market_buy(SYMBOL, order_size)
                 save_trades_data("bull", "sma21_entry", tick_price, order.origQty)
