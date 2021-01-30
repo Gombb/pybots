@@ -78,10 +78,10 @@ def swap_unix_to_date(unix_value, mode="mili"):
     return timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
 
-def save_trades_data(side, strat, exec_prirce, quantity):
+def save_trades_data(side, strat, exec_prirce, quantity, rsi_last, sma__1, sma__2, ema_last):
     existing_data = data_manager.read_csv(data_manager.TRADE_HISTORY_PATH)
     current_time = swap_unix_to_date(CURRENT_TIME)
-    current_data = {"time": current_time, "side": side, "strat": strat, "exec_price": exec_prirce, "quantity": quantity}
+    current_data = {"time": current_time, "side": side, "strat": strat, "exec_price": exec_prirce, "quantity": quantity, "rsi": rsi_last, "-1 sma": sma__1, "-2 sma": sma__2, "ema": ema_last}
     existing_data.append(current_data)
     data_manager.write_csv(data_manager.TRADE_HISTORY_HEADERS, data_manager.TRADE_HISTORY_PATH, existing_data)
 
@@ -113,48 +113,46 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
             #     save_trades_data("bull", "straight_buy", tick_price, order.origQty)
             if sma21_bull_buy(tick_price, rsi_5min, sma_5min, ema_15min):
                 order = market_buy(SYMBOL, order_size)
-                save_trades_data("bull", "sma21_entry", tick_price, order.origQty)
+                save_trades_data("bull", "sma21_entry", tick_price, order.origQty, rsi[-1], sma_5min[-1], sma_5min[-2], ema_15minmin[-1])
                 user_session["in_position"] = True
                 user_session["active_position"] = "+ " + str(order.origQty)
                 buy_stop(SYMBOL, str(order.origQty), str(round(tick_price * BUY_STOP_LVL, 3)))
             if sma21_bear_sell(tick_price, rsi_5min, sma_5min, ema_15min) == True:
                 order = market_sell(SYMBOL, order_size)
-                save_trades_data("bear", "sma21_entry", tick_price, order.origQty)
+                save_trades_data("bear", "sma21_entry", tick_price, order.origQty, rsi[-1], sma_5min[-1], sma_5min[-2], ema_15minmin[-1])
                 user_session["in_position"] = True
                 user_session["active_position"] = "- "+ str(order.origQty)
                 sell_stop(SYMBOL, str(order.origQty), str(round(tick_price * SELL_STOP_LVL, 3)))
             
 
         if user_session["in_position"] == True:
-            if user_session["active_position"].split(" ")[0] == "+" and tick_price < sma_5min[-1]:
-                if sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1] and sma_5min[-3] < ema_15min[-1]:
-                    sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
-                    save_trades_data("bull", "sma21_backcross_exit", tick_price, sell_order.origQty)
-                    user_session["in_position"] = False
-                    user_session["active_position"] = 0 
-                    cancel_order = cancell_all_order(SYMBOL)    
-                    PrintBasic.print_obj(sell_order)
-                    PrintBasic.print_obj(cancel_order)
-            if user_session["active_position"].split(" ")[0] == "-" and tick_price > sma_5min[-1]:  
-                if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1] and sma_5min[-3] > ema_15min[-1]:
-                    buy_order = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
-                    save_trades_data("bear", "sma21_backcross_exit", tick_price, buy_order.origQty)
-                    user_session["in_position"] = False
-                    user_session["active_position"] = 0
-                    cancel_order = cancell_all_order(SYMBOL)
-                    PrintBasic.print_obj(buy_order)
-                    PrintBasic.print_obj(cancel_order)
-            if sma21_bull_sell(rsi_5min):
+            if user_session["active_position"].split(" ")[0] == "+" and (sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1]):
                 sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
-                save_trades_data("bull", "sma21_exit", tick_price, sell_order.origQty)
+                save_trades_data("bull", "sma21_backcross_exit", tick_price, sell_order.origQty, rsi[-1], sma_5min[-1], sma_5min[-2], ema_15minmin[-1])
                 user_session["in_position"] = False
+                user_session["active_position"] = 0 
+                cancel_order = cancell_all_order(SYMBOL)    
+                PrintBasic.print_obj(sell_order)
+                PrintBasic.print_obj(cancel_order)
+            if user_session["active_position"].split(" ")[0] == "-" and (sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1]):
+                buy_order = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
+                save_trades_data("bear", "sma21_backcross_exit", tick_price, buy_order.origQty, rsi[-1], sma_5min[-1], sma_5min[-2], ema_15minmin[-1])
+                user_session["in_position"] = False
+                user_session["active_position"] = 0
+                cancel_order = cancell_all_order(SYMBOL)
+                PrintBasic.print_obj(buy_order)
+                PrintBasic.print_obj(cancel_order)
+            if sma21_bull_sell(rsi_5min):
+                user_session["in_position"] = False
+                sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
+                save_trades_data("bull", "sma21_exit", tick_price, sell_order.origQty, rsi[-1], sma_5min[-1], sma_5min[-2], ema_15minmin[-1])
                 user_session["active_position"] = 0 
                 cancel_order = cancell_all_order(SYMBOL)    
                 PrintBasic.print_obj(sell_order)
                 PrintBasic.print_obj(cancel_order)
             if sma21_bear_buy(rsi_5min):
                 buy_order = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
-                save_trades_data("bear", "sma21_exit", tick_price, buy_order.origQty)
+                save_trades_data("bear", "sma21_exit", tick_price, buy_order.origQty, rsi[-1], sma_5min[-1], sma_5min[-2], ema_15minmin[-1])
                 user_session["in_position"] = False
                 user_session["active_position"] = 0
                 cancel_order = cancell_all_order(SYMBOL)

@@ -4,7 +4,7 @@ SCRIPT_DIR = os.path.split(SCRIPT_PATH)[0]
 STRAT_BULL_PATH = os.path.join(SCRIPT_DIR, "cache/bull_strat.csv")
 STRAT_BEAR_PATH = os.path.join(SCRIPT_DIR, "cache/bear_strat.csv")
 TRADE_HISTORY_PATH  = os.path.join(SCRIPT_DIR, "cache/trade_history.csv")
-TRADE_HISTORY_HEADERS = ["time", "side", "strat", "exec_price", "quantity"]
+TRADE_HISTORY_HEADERS = ["time", "side", "strat", "exec_price", "quantity", "rsi", "-1 sma", "-2 sma", "ema"]
 
 
 def read_csv(file_path):
