@@ -126,7 +126,6 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
             
 
         if user_session["in_position"] == True:
-<<<<<<< HEAD
             if user_session["active_position"].split(" ")[0] == "+" and tick_price < sma_5min[-1]:
                 if sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1] and sma_5min[-3] < ema_15min[-1]:
                     long_close = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
@@ -146,9 +145,6 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                     save_trades_data("bear", "sma21_backcross_entry", tick_price, long_open.origQty)
                     check_positon(SYMBOL)
             if sma21_bull_sell(rsi_5min):
-=======
-            if user_session["active_position"].split(" ")[0] == "+" and (sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1]):
->>>>>>> 03faea488a8f768c69c02b95ca838aeea9e0dfe7
                 sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
                 save_trades_data("bull", "sma21_backcross_exit", tick_price, sell_order.origQty, rsi[-1], sma_5min[-1], sma_5min[-2], ema_15minmin[-1])
                 user_session["in_position"] = False
