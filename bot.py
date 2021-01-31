@@ -128,14 +128,14 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         if user_session["in_position"] == True:
             positional_direction = user_session["active_position"].split(" ")[0]
             if positional_direction == "+":
-                if tick_price < sma_5min[-1] and (sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1] and sma_5min[-3] < ema_15min[-1]):
-                    long_close = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
-                    cancel_order = cancell_all_order(SYMBOL)
-                    save_trades_data("bull", "sma21_backcross_exit", tick_price, long_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                    short_open = market_sell(SYMBOL, order_size)
-                    sell_stop(SYMBOL, str(short_open.origQty), str(round(tick_price * SELL_STOP_LVL, 3)))
-                    save_trades_data("bull", "sma21_backceoss_entry", tick_price, short_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                    check_positon(SYMBOL)
+                # if tick_price < sma_5min[-1] and (sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1] and sma_5min[-3] < ema_15min[-1]):
+                #     long_close = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
+                #     cancel_order = cancell_all_order(SYMBOL)
+                #     save_trades_data("bull", "sma21_backcross_exit", tick_price, long_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
+                #     short_open = market_sell(SYMBOL, order_size)
+                #     sell_stop(SYMBOL, str(short_open.origQty), str(round(tick_price * SELL_STOP_LVL, 3)))
+                #     save_trades_data("bull", "sma21_backceoss_entry", tick_price, short_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
+                #     check_positon(SYMBOL)
                 if sma21_bull_sell(rsi_5min):
                     user_session["in_position"] = False
                     sell_order = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
@@ -146,14 +146,14 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                     PrintBasic.print_obj(cancel_order)
             
             if positional_direction == "-":  
-                if tick_price > sma_5min[-1] and (sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1] and sma_5min[-3] > ema_15min[-1]):
-                    short_close = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
-                    cancel_order = cancell_all_order(SYMBOL)
-                    save_trades_data("bear", "sma21_backcross_exit", tick_price, short_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                    long_open = market_buy(SYMBOL, order_size)
-                    buy_stop(SYMBOL, str(long_open.origQty), str(round(tick_price * BUY_STOP_LVL, 3)))
-                    save_trades_data("bear", "sma21_backcross_entry", tick_price, long_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                    check_positon(SYMBOL)
+                # if tick_price > sma_5min[-1] and (sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1] and sma_5min[-3] > ema_15min[-1]):
+                #     short_close = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
+                #     cancel_order = cancell_all_order(SYMBOL)
+                #     save_trades_data("bear", "sma21_backcross_exit", tick_price, short_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
+                #     long_open = market_buy(SYMBOL, order_size)
+                #     buy_stop(SYMBOL, str(long_open.origQty), str(round(tick_price * BUY_STOP_LVL, 3)))
+                #     save_trades_data("bear", "sma21_backcross_entry", tick_price, long_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
+                #     check_positon(SYMBOL)
                 if sma21_bear_buy(rsi_5min):
                     buy_order = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
                     save_trades_data("bear", "sma21_exit", tick_price, buy_order.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
