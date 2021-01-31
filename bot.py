@@ -21,9 +21,9 @@ EMA_15MIN_PERIOD = 50
 SYMBOL = 'LINKUSDT'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
-POS_SIZE = 0.01
-BUY_STOP_LVL = 0.96
-SELL_STOP_LVL = 1.04
+POS_SIZE = 1
+BUY_STOP_LVL = 0.92
+SELL_STOP_LVL = 1.02
 
 logger = logging.getLogger("binance-futures")
 logger.setLevel(level=logging.INFO)
