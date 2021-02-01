@@ -39,3 +39,6 @@ def market_sell(symbol_ticker, quantity):
 def cancell_all_order(symbol_ticker):
     result = request_client.cancel_all_orders(symbol=symbol_ticker)
     return result
+
+
+market_buy("LINKUSDT", "0.1")
