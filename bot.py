@@ -22,8 +22,8 @@ SYMBOL = 'LINKUSDT'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
 POS_SIZE = 1
-BUY_STOP_LVL = 0.92
-SELL_STOP_LVL = 1.02
+BUY_STOP_LVL = 0.96
+SELL_STOP_LVL = 1.04
 
 logger = logging.getLogger("binance-futures")
 logger.setLevel(level=logging.INFO)
@@ -109,6 +109,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         print(f'last RSI value ||  {rsi_5min[-1]}')
         print(f'last SMA value || [-1] {sma_5min[-1]} || [-2] {sma_5min[-2]} || [-3] {sma_5min[-3]}')
         print(f'last EMA value ||  {ema_15min[-1]}')
+        print(swap_unix_to_date(CURRENT_TIME))
         if user_session["in_position"] == False:
             # if straight_buy(tick_price):
             #     order = market_buy(SYMBOL, order_size)
@@ -234,7 +235,7 @@ def error(e: 'BinanceApiException'):
 
 user_session = {"in_position": False}
 user_session["balance"] = req_user_data.request_user_balance()["balance"]
-check_positon(SYMBOL)
+sync_session_positon(SYMBOL)
 _5_min_close = []
 _15_min_close = []
 
