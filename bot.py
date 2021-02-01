@@ -48,7 +48,7 @@ def sync_session_positon(symbol_ticker):
 
 
 def check_position_limit(smybol_ticker):
-    result = req_user_data.re
+    pass
 
 
 
