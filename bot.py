@@ -1,9 +1,9 @@
 import logging
-from binance_f import SubscriptionClient
-from binance_f.constant.test import *
-from binance_f.model import *
-from binance_f.exception.binanceapiexception import BinanceApiException
-from binance_f.base.printobject import *
+from binance_d import SubscriptionClient
+from binance_d.constant.test import *
+from binance_d.model import *
+from binance_d.exception.binanceapiexception import BinanceApiException
+from binance_d.base.printobject import *
 import talib, numpy
 import talib.abstract as ta
 from time import time
@@ -244,6 +244,6 @@ pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/9, CURRENT_TIME, "5m", _5_min_close)
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_close)
 
 
-sub_client.subscribe_symbol_ticker_event("linkusdt", ticker_callback, error)
-sub_client.subscribe_candlestick_event("linkusdt", CandlestickInterval.MIN5, candle_callback_5min, error)
-sub_client.subscribe_candlestick_event("linkusdt", CandlestickInterval.MIN15, candle_callback_15min, error)
+sub_client.subscribe_symbol_ticker_event("ethusd", ticker_callback, error)
+sub_client.subscribe_candlestick_event("ethusd", CandlestickInterval.MIN5, candle_callback_5min, error)
+sub_client.subscribe_candlestick_event("ethusd", CandlestickInterval.MIN15, candle_callback_15min, error)
