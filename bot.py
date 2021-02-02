@@ -200,7 +200,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
                     save_trades_data("bull", "sma21_backcross_exit", _5_min_close[-1], long_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     short_open = market_sell(SYMBOL, order_size)
                     sell_stop(SYMBOL, str(short_open.origQty), str(round(_5_min_close[-1] * SELL_STOP_LVL, 3)))
-                    save_trades_data("bull", "sma21_backceoss_entry", _5_min_close[-1], short_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
+                    save_trades_data("bull", "sma21_backcross_entry", _5_min_close[-1], short_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     sync_session_positon(SYMBOL)
 
 
