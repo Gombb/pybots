@@ -13,7 +13,7 @@ handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s -
 logger.addHandler(handler)
 
 
-request_client = RequestClient(api_key=config.API_KEY, secret_key=config.API_SECRET,  url="https://fapi.binance.com")
+request_client = RequestClient(api_key=config.API_KEY, secret_key=config.API_SECRET,  url="https://dapi.binance.com")
 
 
 def sell_stop(symbol_ticker, quantity, stop_price):
@@ -41,4 +41,3 @@ def cancell_all_order(symbol_ticker):
     return result
 
 
-market_buy("LINKUSDT", "0.1")

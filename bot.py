@@ -18,10 +18,10 @@ import datetime
 RSI_PERIOD = 14
 SMA_5MIN_PERIOD = 21
 EMA_15MIN_PERIOD = 50
-SYMBOL = 'LINKUSDT'
+SYMBOL = 'ETHUSD_PERP'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
-POS_SIZE = 1
+POS_SIZE = 0.5
 BUY_STOP_LVL = 0.96
 SELL_STOP_LVL = 1.04
 
@@ -30,7 +30,7 @@ logger.setLevel(level=logging.INFO)
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 logger.addHandler(handler)
-sub_client = SubscriptionClient(api_key=API_KEY, secret_key=API_SECRET, uri="wss://fstream.binance.com/ws")
+sub_client = SubscriptionClient(api_key=API_KEY, secret_key=API_SECRET, uri="wss://dstream.binance.com/ws")
 
 def sync_session_positon(symbol_ticker):
     global user_session
@@ -98,9 +98,8 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         # PrintBasic.print_obj(event)
 
         tick_price = float(event.lastPrice)
-        order_size = str(round(user_session["balance"] * POS_SIZE / tick_price, 2))
-        # buy_stop_price= str(round(tick_price * BUY_STOP_LVL, 2))
-        # sell_stop_price = str(round(tick_price * SELL_STOP_LVL, 2))
+        order_size = str(round(tick_price * user_session["balance"] * POS_SIZE / 10 , 0))
+ 
         print(tick_price)
         print(user_session)
         rsi_5min = calculate_rsi(_5_min_close)
@@ -115,7 +114,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
             #     order = market_buy(SYMBOL, order_size)
             #     user_session["in_position"] = True
             #     user_session["active_position"] = "+ "+ str(order.origQty)
-            #     buy_stop(SYMBOL, user_session["active_position"].split(" ")[1], str(round(tick_price * BUY_STOP_LVL, 3)))
+            #     buy_stop(SYMBOL, user_session["active_position"].split(" ")[1], str(round(tick_price * BUY_STOP_LVL, 0)))
             #     save_trades_data("bull", "straight_buy", tick_price, order.origQty)
             if sma21_bull_buy(tick_price, rsi_5min, sma_5min, ema_15min):
                 order = market_buy(SYMBOL, order_size)
@@ -183,14 +182,14 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
             rsi_5min = calculate_rsi(_5_min_close)
             sma_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
             ema_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
-            order_size = str(round(user_session["balance"] * POS_SIZE / _5_min_close[-1], 2))
+            order_size = str(round(sma_5min[-1] * user_session["balance"] * POS_SIZE / 10 , 0))
             if positional_direction == "-":
                 if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1] and sma_5min[-3] > ema_15min[-1]:
                     short_close = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
                     cancel_order = cancell_all_order(SYMBOL)
                     save_trades_data("bear", "sma21_backcross_exit", _5_min_close[-1], short_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     long_open = market_buy(SYMBOL, order_size)
-                    buy_stop(SYMBOL, str(long_open.origQty), str(round(_5_min_close * BUY_STOP_LVL, 3)))
+                    buy_stop(SYMBOL, str(long_open.origQty), str(round(_5_min_close * BUY_STOP_LVL, 0)))
                     save_trades_data("bear", "sma21_backcross_entry", _5_min_close[-1], long_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     sync_session_positon(SYMBOL)
             if positional_direction == "+":
@@ -199,7 +198,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
                     cancel_order = cancell_all_order(SYMBOL)
                     save_trades_data("bull", "sma21_backcross_exit", _5_min_close[-1], long_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     short_open = market_sell(SYMBOL, order_size)
-                    sell_stop(SYMBOL, str(short_open.origQty), str(round(_5_min_close[-1] * SELL_STOP_LVL, 3)))
+                    sell_stop(SYMBOL, str(short_open.origQty), str(round(_5_min_close[-1] * SELL_STOP_LVL, 0)))
                     save_trades_data("bull", "sma21_backcross_entry", _5_min_close[-1], short_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     sync_session_positon(SYMBOL)
 
@@ -244,6 +243,6 @@ pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/9, CURRENT_TIME, "5m", _5_min_close)
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_close)
 
 
-sub_client.subscribe_symbol_ticker_event("ethusd", ticker_callback, error)
-sub_client.subscribe_candlestick_event("ethusd", CandlestickInterval.MIN5, candle_callback_5min, error)
-sub_client.subscribe_candlestick_event("ethusd", CandlestickInterval.MIN15, candle_callback_15min, error)
+sub_client.subscribe_symbol_ticker_event("ethusd_perp", ticker_callback, error)
+sub_client.subscribe_candlestick_event("ethusd_perp", CandlestickInterval.MIN5, candle_callback_5min, error)
+sub_client.subscribe_candlestick_event("ethusd_perp", CandlestickInterval.MIN15, candle_callback_15min, error)
