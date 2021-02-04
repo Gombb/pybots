@@ -45,11 +45,11 @@ def sync_session_positon(symbol_ticker):
         if ele.symbol == symbol_ticker and ele.positionAmt < 0.0:
             user_session["in_position"] = True
             user_session["active_position"] = "- " + str(ele.positionAmt).split("-")[1] 
+    user_session["balance"] = req_user_data.request_user_balance()["balance"]
 
 
 def check_position_limit(smybol_ticker):
     pass
-
 
 
 def collect_closes(closing_price, close_list):
