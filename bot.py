@@ -190,7 +190,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
                     cancel_order = cancell_all_order(SYMBOL)
                     save_trades_data("bear", "sma21_backcross_exit", _5_min_close[-1], short_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     long_open = market_buy(SYMBOL, order_size)
-                    buy_stop(SYMBOL, str(long_open.origQty), str(round(_5_min_close * BUY_STOP_LVL, 3)))
+                    buy_stop(SYMBOL, str(long_open.origQty), str(round(_5_min_close[-1] * BUY_STOP_LVL, 3)))
                     save_trades_data("bear", "sma21_backcross_entry", _5_min_close[-1], long_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     sync_session_positon(SYMBOL)
             if positional_direction == "+":
