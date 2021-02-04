@@ -190,7 +190,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
                     short_close = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
                     save_trades_data("bear", "sma21_backcross_exit", _5_min_close[-1], short_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     long_open = market_buy(SYMBOL, order_size)
-                    buy_stop(SYMBOL, str(long_open.origQty), str(round(_5_min_close * BUY_STOP_LVL, 3)))
+                    buy_stop(SYMBOL, str(order_size), str(round(_5_min_close * BUY_STOP_LVL, 3)))
                     save_trades_data("bear", "sma21_backcross_entry", _5_min_close[-1], long_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     sync_session_positon(SYMBOL)
             if positional_direction == "+":
@@ -199,7 +199,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
                     long_close = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
                     save_trades_data("bull", "sma21_backcross_exit", _5_min_close[-1], long_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     short_open = market_sell(SYMBOL, order_size)
-                    sell_stop(SYMBOL, str(short_open.origQty), str(round(_5_min_close[-1] * SELL_STOP_LVL, 3)))
+                    sell_stop(SYMBOL, str(order_size), str(round(_5_min_close[-1] * SELL_STOP_LVL, 3)))
                     save_trades_data("bull", "sma21_backcross_entry", _5_min_close[-1], short_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     sync_session_positon(SYMBOL)
 
