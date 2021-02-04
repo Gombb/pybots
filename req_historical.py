@@ -6,9 +6,9 @@ from binance_d.base.printobject import *
 from config import *
 from time import time
 
-SYMBOL = "linkusdt"
+SYMBOL = "ethusd_perp"
 CURRENT_TIME = int(time() * 1000)
-request_client = RequestClient(api_key=API_KEY, secret_key=API_SECRET, url="https://fapi.binance.com")
+request_client = RequestClient(api_key=API_KEY, secret_key=API_SECRET, url="https://dapi.binance.com")
 
 
 def get_historical_data(start_time, end_time, interval):
