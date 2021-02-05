@@ -7,6 +7,17 @@ def straight_buy(tick_price):
         return True
 
 
+def sma21_bear_backcross(sma_5min, ema_15min):
+    if sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1] and sma_5min[-3] < ema_15min[-1]:
+        return True
+
+
+def sma21_bull_backcross(sma_5min, ema_15min):
+    if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1] and sma_5min[-3] > ema_15min[-1]:
+        return True
+
+
+
 def sma21_bull_buy(tick_price, rsi, sma21, highTFema):    
     rsi_is_bull = rsi[-1] >= 51
     low_crossed_sma = tick_price <= sma21[-1]
