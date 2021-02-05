@@ -94,12 +94,9 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
     if data_type == SubscribeMessageType.RESPONSE:
         print("Event ID: ", event)
     elif  data_type == SubscribeMessageType.PAYLOAD:
-        # PrintBasic.print_obj(event)
 
         tick_price = float(event.lastPrice)
         order_size = str(round(user_session["balance"] * POS_SIZE / tick_price, 2))
-        # buy_stop_price= str(round(tick_price * BUY_STOP_LVL, 2))
-        # sell_stop_price = str(round(tick_price * SELL_STOP_LVL, 2))
         print(tick_price)
         print(user_session)
         rsi_5min = calculate_rsi(_5_min_close)
