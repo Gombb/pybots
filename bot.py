@@ -13,7 +13,7 @@ from config import *
 from orders import *
 import datetime
 
-
+ #changed stop loss lvl
 SYMBOL = 'LINKUSDT'
 RSI_PERIOD = 14
 SMA_5MIN_PERIOD = 21
@@ -21,8 +21,8 @@ EMA_15MIN_PERIOD = 50
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
 POS_SIZE = 1
-BUY_STOP_LVL = 0.96
-SELL_STOP_LVL = 1.04
+BUY_STOP_LVL = 0.97
+SELL_STOP_LVL = 1.03
 ASSET_PRICE_PREC = 3
 CONTRACT_ORDER_PREC = 2
 

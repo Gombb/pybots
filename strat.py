@@ -8,12 +8,12 @@ def straight_buy(tick_price):
 
 
 def sma21_bear_backcross(sma_5min, ema_15min):
-    if sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1] and sma_5min[-3] < ema_15min[-1]:
+    if sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1]:
         return True
 
 
 def sma21_bull_backcross(sma_5min, ema_15min):
-    if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1] and sma_5min[-3] > ema_15min[-1]:
+    if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1]:
         return True
 
 
