@@ -71,8 +71,8 @@ def calculate_ema(candle_closes, length):
     return talib.EMA(numpy.array(candle_closes), length)
 
 
-def pre_fill_close_list(start_time, end_time, interval, close_list):
-    candle_data = req_historical.get_historical_data(start_time, end_time, interval)
+def pre_fill_close_list(start_time, end_time, interval, close_list, symbol=SYMBOL):
+    candle_data = req_historical.get_historical_data(symbol, start_time, end_time, interval)
     for obj in candle_data:
         close_list.append(float(obj.close))
 
@@ -245,6 +245,6 @@ pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/9, CURRENT_TIME, "5m", _5_min_close)
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_close)
 
 
-sub_client.subscribe_symbol_ticker_event("ethusd_perp", ticker_callback, error)
-sub_client.subscribe_candlestick_event("ethusd_perp", CandlestickInterval.MIN5, candle_callback_5min, error)
-sub_client.subscribe_candlestick_event("ethusd_perp", CandlestickInterval.MIN15, candle_callback_15min, error)
+sub_client.subscribe_symbol_ticker_event(SYMBOL, ticker_callback, error)
+sub_client.subscribe_candlestick_event(SYMBOL, CandlestickInterval.MIN5, candle_callback_5min, error)
+sub_client.subscribe_candlestick_event(SYMBOL, CandlestickInterval.MIN15, candle_callback_15min, error)
