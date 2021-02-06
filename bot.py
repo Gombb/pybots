@@ -245,6 +245,6 @@ pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/9, CURRENT_TIME, "5m", _5_min_close)
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_close)
 
 
-sub_client.subscribe_symbol_ticker_event("BTCUSD_PERP", ticker_callback, error)
-sub_client.subscribe_candlestick_event("BTCUSD_PERP", CandlestickInterval.MIN5, candle_callback_5min, error)
-sub_client.subscribe_candlestick_event("BTCUSD_PERP", CandlestickInterval.MIN15, candle_callback_15min, error)
+sub_client.subscribe_symbol_ticker_event(SYMBOL.lower(), ticker_callback, error)
+sub_client.subscribe_candlestick_event(SYMBOL.lower(), CandlestickInterval.MIN5, candle_callback_5min, error)
+sub_client.subscribe_candlestick_event(SYMBOL.lower(), CandlestickInterval.MIN15, candle_callback_15min, error)
