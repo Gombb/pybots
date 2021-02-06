@@ -17,8 +17,8 @@ import datetime
 
 RSI_PERIOD = 14
 SMA_5MIN_PERIOD = 21
-EMA_15MIN_PERIOD = 50
-SYMBOL = 'ETHUSD_PERP'
+EMA_15MIN_PERIOD = 200
+SYMBOL = 'BTCUSD_PERP'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
 POS_SIZE = 0.5
@@ -26,6 +26,7 @@ BUY_STOP_LVL = 0.97
 SELL_STOP_LVL = 1.03
 ASSET_PRICE_PREC = 2
 CONTRACT_ORDER_PREC = 0
+ONE_CONTRACT_USD = 100
 
 logger = logging.getLogger("binance-futures")
 logger.setLevel(level=logging.INFO)
@@ -100,7 +101,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         # PrintBasic.print_obj(event)
 
         tick_price = float(event.lastPrice)
-        order_size = str(round(tick_price * user_session["balance"] * POS_SIZE / 10 , CONTRACT_ORDER_PREC))
+        order_size = str(round(tick_price * user_session["balance"] * POS_SIZE / ONE_CONTRACT_USD , CONTRACT_ORDER_PREC))
         print(tick_price)
         print(user_session)
         rsi_5min = calculate_rsi(_5_min_close)
@@ -183,7 +184,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
             rsi_5min = calculate_rsi(_5_min_close)
             sma_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
             ema_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
-            order_size = str(round(sma_5min[-1] * user_session["balance"] * POS_SIZE / 10 , CONTRACT_ORDER_PREC))
+            order_size = str(round(sma_5min[-1] * user_session["balance"] * POS_SIZE / ONE_CONTRACT_USD , CONTRACT_ORDER_PREC))
             if positional_direction == "-":
                 if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1]:
                     short_close = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
