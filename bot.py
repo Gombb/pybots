@@ -22,8 +22,8 @@ SYMBOL = 'ETHUSD_PERP'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
 POS_SIZE = 0.5
-BUY_STOP_LVL = 0.96
-SELL_STOP_LVL = 1.04
+BUY_STOP_LVL = 0.97
+SELL_STOP_LVL = 1.03
 ASSET_PRICE_PREC = 2
 CONTRACT_ORDER_PREC = 0
 
@@ -185,7 +185,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
             ema_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
             order_size = str(round(sma_5min[-1] * user_session["balance"] * POS_SIZE / 10 , CONTRACT_ORDER_PREC))
             if positional_direction == "-":
-                if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1] and sma_5min[-3] > ema_15min[-1]:
+                if sma_5min[-1] > ema_15min[-1] and sma_5min[-2] > ema_15min[-1]:
                     short_close = market_buy(SYMBOL, user_session["active_position"].split(" ")[1])
                     cancel_order = cancell_all_order(SYMBOL)
                     save_trades_data("bear", "sma21_backcross_exit", _5_min_close[-1], short_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
@@ -194,7 +194,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
                     save_trades_data("bear", "sma21_backcross_entry", _5_min_close[-1], long_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                     sync_session_positon(SYMBOL)
             if positional_direction == "+":
-                if sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1] and sma_5min[-3] < ema_15min[-1]:
+                if sma_5min[-1] < ema_15min[-1] and sma_5min[-2] < ema_15min[-1]:
                     long_close = market_sell(SYMBOL, user_session["active_position"].split(" ")[1])
                     cancel_order = cancell_all_order(SYMBOL)
                     save_trades_data("bull", "sma21_backcross_exit", _5_min_close[-1], long_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
