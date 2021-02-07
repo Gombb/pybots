@@ -6,11 +6,11 @@ from config import *
 request_client = RequestClient(api_key=API_KEY, secret_key=API_SECRET, url="https://dapi.binance.com")
 
 
-def request_user_balance():
+def request_user_balance(asset):
     
     result = request_client.get_balance()
     for i in result:
-        if i.asset == "ETH":
+        if i.asset == asset:
             return {"balance": i.balance, "asset": i.asset}
 
 
@@ -20,11 +20,11 @@ def request_user_position():
     return result
 
 
-res = request_user_position()
-for i in res:
-    if i.symbol == "ETHUSD_PERP":
-        PrintBasic.print_obj(i)
-        print(type(i))
+# res = request_user_position()
+# for i in res:
+#     if i.symbol == "ETHUSD_PERP":
+#         PrintBasic.print_obj(i)
+#         print(type(i))
 
 
 def request_trading_stats():    

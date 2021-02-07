@@ -17,13 +17,14 @@ import datetime
 
 RSI_PERIOD = 14
 SMA_5MIN_PERIOD = 21
-EMA_15MIN_PERIOD = 200
+EMA_15MIN_PERIOD = 50
 SYMBOL = 'BTCUSD_PERP'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
-POS_SIZE = 0.5
+POS_SIZE = 1
 BUY_STOP_LVL = 0.97
 SELL_STOP_LVL = 1.03
+ASSET_TICKER = "BTC"
 ASSET_PRICE_PREC = 2
 CONTRACT_ORDER_PREC = 0
 ONE_CONTRACT_USD = 100
@@ -113,11 +114,12 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         print(swap_unix_to_date(CURRENT_TIME))
         if user_session["in_position"] == False:
             # if straight_buy(tick_price):
+            #     print(order_size)
             #     order = market_buy(SYMBOL, order_size)
             #     user_session["in_position"] = True
             #     user_session["active_position"] = "+ "+ str(order.origQty)
-            #     buy_stop(SYMBOL, user_session["active_position"].split(" ")[1], str(round(tick_price * BUY_STOP_LVL, 0)))
-            #     save_trades_data("bull", "straight_buy", tick_price, order.origQty)
+            #     buy_stop(SYMBOL, str(order.origQty), str(round(tick_price * BUY_STOP_LVL, ASSET_PRICE_PREC)))
+                # save_trades_data("bull", "straight_buy", tick_price, order.origQty)
             if sma21_bull_buy(tick_price, rsi_5min, sma_5min, ema_15min):
                 order = market_buy(SYMBOL, order_size)
                 save_trades_data("bull", "sma21_entry", tick_price, order.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
@@ -235,8 +237,8 @@ def error(e: 'BinanceApiException'):
 
 
 user_session = {"in_position": False}
-user_session["balance"] = req_user_data.request_user_balance()["balance"]
-sync_session_positon(SYMBOL)
+user_session["balance"] = req_user_data.request_user_balance(ASSET_TICKER)["balance"]
+sync_session_positon(SYMBOL)200
 _5_min_close = []
 _15_min_close = []
 
