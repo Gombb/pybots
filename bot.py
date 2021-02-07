@@ -238,7 +238,7 @@ def error(e: 'BinanceApiException'):
 
 user_session = {"in_position": False}
 user_session["balance"] = req_user_data.request_user_balance(ASSET_TICKER)["balance"]
-sync_session_positon(SYMBOL)200
+sync_session_positon(SYMBOL)
 _5_min_close = []
 _15_min_close = []
 
