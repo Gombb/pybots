@@ -18,14 +18,14 @@ import datetime
 RSI_PERIOD = 14
 SMA_5MIN_PERIOD = 21
 EMA_15MIN_PERIOD = 50
-SYMBOL = 'BTCUSDT'
+SYMBOL = 'LINKUSDT'
 CURRENT_TIME = int(time() * 1000)
 UNIX_9DAYS = 691200000
-POS_SIZE = 3
+POS_SIZE = 1
 BUY_STOP_LVL = 0.97
 SELL_STOP_LVL = 1.03
-ASSET_PRICE_PREC = 2
-ASSET_SIZE_PREC = 3
+ASSET_PRICE_PREC = 3
+ASSET_SIZE_PREC = 2
 
 logger = logging.getLogger("binance-futures")
 logger.setLevel(level=logging.INFO)
