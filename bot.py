@@ -120,15 +120,15 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
             #     buy_stop(SYMBOL, user_session["active_position"].split(" ")[1], str(round(tick_price * BUY_STOP_LVL, 3)))
             #     save_trades_data("bull", "straight_buy", tick_price, order.origQty)
             if sma21_bull_buy(tick_price, rsi_5min, sma_5min, ema_15min):
+                user_session["in_position"] = True
                 order = market_buy(SYMBOL, order_size)
                 save_trades_data("bull", "sma21_entry", tick_price, order.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                user_session["in_position"] = True
                 user_session["active_position"] = "+ " + str(order.origQty)
                 buy_stop(SYMBOL, str(order.origQty), str(round(tick_price * BUY_STOP_LVL, ASSET_PRICE_PREC)))
             if sma21_bear_sell(tick_price, rsi_5min, sma_5min, ema_15min) == True:
+                user_session["in_position"] = True
                 order = market_sell(SYMBOL, order_size)
                 save_trades_data("bear", "sma21_entry", tick_price, order.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                user_session["in_position"] = True
                 user_session["active_position"] = "- "+ str(order.origQty)
                 sell_stop(SYMBOL, str(order.origQty), str(round(tick_price * SELL_STOP_LVL, ASSET_PRICE_PREC)))
             
