@@ -36,12 +36,12 @@ def market_sell(symbol_ticker, quantity):
     return result
 
 
-def limit_buy(symbol_ticker, price, quantity):
-    result = request_client.post_order(symbol=symbol, side=OrderSide.BUY, ordertype=OrderType.LIMIT, price=price, quantity=quantity, timeInForce=TimeInForce.GTC)
+def limit_buy(symbol_ticker, quantity, price):
+    result = request_client.post_order(symbol=symbol_ticker, side=OrderSide.BUY, ordertype=OrderType.LIMIT, price=price, quantity=quantity, timeInForce=TimeInForce.GTC)
 
 
-def limit_sell(symbol_ticker, price, quantity):
-    result = request_client.post_order(symbol=symbol, side=OrderSide.SELL, ordertype=OrderType.LIMIT, price=price, quantity=quantity, timeInForce=TimeInForce.GTC)
+def limit_sell(symbol_ticker, quantity, price):
+    result = request_client.post_order(symbol=symbol_ticker, side=OrderSide.SELL, ordertype=OrderType.LIMIT, price=price, quantity=quantity, timeInForce=TimeInForce.GTC)
 
 
 def cancell_all_order(symbol_ticker):
