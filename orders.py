@@ -44,6 +44,10 @@ def limit_sell(symbol_ticker, quantity, price):
     return request_client.post_order(symbol=symbol_ticker, side=OrderSide.SELL, ordertype=OrderType.LIMIT, price=price, quantity=quantity, timeInForce=TimeInForce.GTC)
 
 
+def cancell_order(symbol_ticker, order_id):
+    return request_client.cancel_order(symbol=symbol_ticker, orderId=order_id)
+    
+
 def cancell_all_order(symbol_ticker):
     result = request_client.cancel_all_orders(symbol=symbol_ticker)
     return result
