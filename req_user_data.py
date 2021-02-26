@@ -12,6 +12,9 @@ def request_user_balance():
     return {"balance": result[0].balance, "asset": result[0].asset}
 
 
+def request_all_orders_for_symbol(symbol):
+    result = request_client.get_all_orders(symbol=symbol)
+    return result
 
 def request_user_position():
     result = request_client.get_position()
