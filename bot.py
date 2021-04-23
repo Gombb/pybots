@@ -16,11 +16,15 @@ import datetime
  #changed stop loss lvl
 SYMBOL = 'LINKUSDT'
 RSI_PERIOD = 14
+# LOW_TF_MA_PERIOD = 21
+# LOW_TF_EMA_PERIOD = None
+# HIGHER_TF_MA_PERIOD = None
+# HIGHER_TF_EMA_PERIOD= 50
 SMA_5MIN_PERIOD = 21
 EMA_15MIN_PERIOD = 50
-CURRENT_TIME = int(time() * 1000)
+CURRENT_TIME = 0
 UNIX_9DAYS = 691200000
-POS_SIZE = 1
+POS_SIZE = 0.1
 BUY_STOP_LVL = 0.97
 SELL_STOP_LVL = 1.03
 ASSET_PRICE_PREC = 3
@@ -61,13 +65,12 @@ def collect_closes(closing_price, close_list):
 def calculate_rsi(candle_closes, length=RSI_PERIOD):
     return ta.RSI(numpy.array(_5_min_close), length)
 
-def calculate_sma(candle_closes, length):
-    return ta.SMA(numpy.array(candle_closes), length)
 
-
-def calculate_ema(candle_closes, length):
-
-    return talib.EMA(numpy.array(candle_closes), length)
+def calculate_MA(candle_closes, ma_length, ema_length):
+    if ema_length is None:
+        return ta.SMA(numpy.array(candle_closes), ma_length)
+    else:
+        return ta.EMA(numpy.array(candle_closes), ema_length)
 
 
 def pre_fill_close_list(start_time, end_time, interval, close_list, symbol=SYMBOL):
@@ -103,12 +106,12 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         print(tick_price)
         print(user_session)
         rsi_5min = calculate_rsi(_5_min_close)
-        sma_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
-        ema_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
+        sma_5min = calculate_MA(_5_min_close, SMA_5MIN_PERIOD, None)
+        ema_15min = calculate_MA(_15_min_close, None,  EMA_15MIN_PERIOD)
         print(f'last RSI value ||  {rsi_5min[-1]}')
         print(f'last SMA value || [-1] {sma_5min[-1]} || [-2] {sma_5min[-2]} || [-3] {sma_5min[-3]}')
         print(f'last EMA value ||  {ema_15min[-1]}')
-        print(swap_unix_to_date(CURRENT_TIME))
+        CURRENT_TIME = event.eventTime
         if user_session["in_position"] == False:
             # if straight_buy(tick_price):
             #     order = market_buy(SYMBOL, order_size)
@@ -152,13 +155,10 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                     cancel_order = cancell_all_order(SYMBOL)
                     PrintBasic.print_obj(buy_order)
                     PrintBasic.print_obj(cancel_order)
-            
-                    
-            
-          
     else:
         print("Unknown Data:")
     print()
+
 
 
 def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
@@ -170,8 +170,8 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
             print(_5_min_close)
             print(_15_min_close)
             print(calculate_rsi(_5_min_close))
-            print(calculate_sma(_5_min_close, SMA_5MIN_PERIOD))
-            print(calculate_ema(_15_min_close, EMA_15MIN_PERIOD))
+            print(calculate_MA(_5_min_close, SMA_5MIN_PERIOD, None))
+            print(calculate_MA(_15_min_close, None,  EMA_15MIN_PERIOD))
             print("Event type: ", event.eventType)
             print("Event time: ", event.eventTime)
             print("Symbol: ", event.symbol)
@@ -182,33 +182,57 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
             positional_direction = user_session["active_position"].split(" ")[0]
             active_pos_size = user_session["active_position"].split(" ")[1]
             rsi_5min = calculate_rsi(_5_min_close)
-            sma_5min = calculate_sma(_5_min_close, SMA_5MIN_PERIOD)
-            ema_15min = calculate_ema(_15_min_close, EMA_15MIN_PERIOD)
+            sma_5min = calculate_MA(_5_min_close, SMA_5MIN_PERIOD, None)
+            ema_15min = calculate_MA(_15_min_close, None,  EMA_15MIN_PERIOD)
             order_size = str(round(user_session["balance"] * POS_SIZE / _5_min_close[-1], CONTRACT_ORDER_PREC))
-            if positional_direction == "-":
-                if sma21_bear_backcross:
-                    cancell_all_order(SYMBOL)
-                    short_close = market_buy(SYMBOL, active_pos_size)
-                    save_trades_data("bear", "sma21_backcross_exit", _5_min_close[-1], short_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                    long_open = market_buy(SYMBOL, order_size)
-                    buy_stop(SYMBOL, str(long_open.origQty), str(round(_5_min_close[-1] * BUY_STOP_LVL, ASSET_PRICE_PREC)))
-                    save_trades_data("bear", "sma21_backcross_entry", _5_min_close[-1], long_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                    sync_session_positon(SYMBOL)
-            if positional_direction == "+":
-                if sma21_bull_backcross:
-                    cancell_all_order(SYMBOL)
-                    long_close = market_sell(SYMBOL, active_pos_size)
-                    save_trades_data("bull", "sma21_backcross_exit", _5_min_close[-1], long_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                    short_open = market_sell(SYMBOL, order_size)
-                    sell_stop(SYMBOL, str(short_open.origQty), str(round(_5_min_close[-1] * SELL_STOP_LVL, ASSET_PRICE_PREC)))
-                    save_trades_data("bull", "sma21_backcross_entry", _5_min_close[-1], short_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                    sync_session_positon(SYMBOL)
-
-
-
+            
+            if user_session["in_position"] == True:
+                if positional_direction == "-":
+                    if sma21_bear_backcross:
+                        cancell_all_order(SYMBOL)
+                        short_close = market_buy(SYMBOL, active_pos_size)
+                        save_trades_data("bear", "sma21_backcross_exit", _5_min_close[-1], short_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
+                        long_open = market_buy(SYMBOL, order_size)
+                        buy_stop(SYMBOL, str(long_open.origQty), str(round(_5_min_close[-1] * BUY_STOP_LVL, ASSET_PRICE_PREC)))
+                        save_trades_data("bear", "sma21_backcross_entry", _5_min_close[-1], long_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
+                        sync_session_positon(SYMBOL)
+                
+                if positional_direction == "+":
+                    if sma21_bull_backcross:
+                        cancell_all_order(SYMBOL)
+                        long_close = market_sell(SYMBOL, active_pos_size)
+                        save_trades_data("bull", "sma21_backcross_exit", _5_min_close[-1], long_close.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
+                        short_open = market_sell(SYMBOL, order_size)
+                        sell_stop(SYMBOL, str(short_open.origQty), str(round(_5_min_close[-1] * SELL_STOP_LVL, ASSET_PRICE_PREC)))
+                        save_trades_data("bull", "sma21_backcross_entry", _5_min_close[-1], short_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
+                        sync_session_positon(SYMBOL)
     else:
         print("Unknown Data:")
     print()
+
+
+def check_and_kill_order(price, side):
+    # all_current_orders = req_user_data.request_all_orders_for_symbol(SYMBOL)
+    # for ele in all_current_orders:
+    #     if ele.status == "NEW":
+    #          if ele.type == "LIMIT" and ele.side == side.upper() and
+    all_current_orders = req_user_data.request_all_orders_for_symbol(SYMBOL)
+    for ele in all_current_orders:
+        #PrintBasic.print_obj(ele)
+        if ele.status == "NEW":
+            if ele.type == "LIMIT" and ele.side == "BUY":
+                cancell_order(SYMBOL, ele.orderId)
+            if ele.type == "STOP_MARKET" and ele.side == "SELL":
+                cancell_order(SYMBOL, ele.orderId)
+        if ele.status == "NEW":
+            if ele.type == "LIMIT" and ele.side == "SELL":
+                cancell_order(SYMBOL, ele.orderId)
+            if ele.type == "STOP_MARKET" and ele.side == "BUY":
+                cancell_order(SYMBOL, ele.orderId)
+
+
+
+
 
 
 
@@ -224,6 +248,26 @@ def candle_callback_15min(data_type: 'SubscribeMessageType', event: 'any'):
             print("Data:")    
             PrintBasic.print_obj(event.data)
             collect_closes(event.data.close, _15_min_close)
+
+            sync_session_positon(SYMBOL)
+            collect_closes(event.data.close, _5_min_close)
+            positional_direction = user_session["active_position"].split(" ")[0]
+            active_pos_size = user_session["active_position"].split(" ")[1]
+            rsi_5min = calculate_rsi(_5_min_close)
+            sma_5min = calculate_MA(_5_min_close, SMA_5MIN_PERIOD, None)
+            ema_15min = calculate_MA(_15_min_close, None,  EMA_15MIN_PERIOD)
+            order_size = str(round(user_session["balance"] * POS_SIZE / _5_min_close[-1], CONTRACT_ORDER_PREC))        
+        
+        if bull_trend(sma_5min, ema_15min):
+            limit_buy(SYMBOL, 5, str(round(ema_15min[-1], ASSET_PRICE_PREC)))
+            buy_stop(SYMBOL, order_size, str(round(ema_15min[-1] * BUY_STOP_LVL, 3)))
+        if bear_trend(sma_5min, ema_15min):
+            limit_sell(SYMBOL, 5, str(round(ema_15min[-1], ASSET_PRICE_PREC)))
+            sell_stop(SYMBOL, order_size, str(round(ema_15min[-1] * SELL_STOP_LVL, 3)))                
+        
+
+
+
     else:
         print("Unknown Data:")
     print()
@@ -239,12 +283,29 @@ user_session["balance"] = req_user_data.request_user_balance()["balance"]
 sync_session_positon(SYMBOL)
 _5_min_close = []
 _15_min_close = []
+# REFACTOR EMAS -- TF relationship
 
 
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/9, CURRENT_TIME, "5m", _5_min_close)
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_close)
 
+sma_5min = calculate_MA(_5_min_close, SMA_5MIN_PERIOD, None)
+ema_15min = calculate_MA(_15_min_close, None,  EMA_15MIN_PERIOD)
 
-sub_client.subscribe_symbol_ticker_event("linkusdt", ticker_callback, error)
-sub_client.subscribe_candlestick_event("linkusdt", CandlestickInterval.MIN5, candle_callback_5min, error)
-sub_client.subscribe_candlestick_event("linkusdt", CandlestickInterval.MIN15, candle_callback_15min, error)
+order_size = str(round(user_session["balance"] * POS_SIZE / ema_15min[-1], CONTRACT_ORDER_PREC))
+
+
+if sma_5min[-1] > ema_15min[-1]:
+    print("sma bigger then ema")
+    limit_buy(SYMBOL, 5, str(round(ema_15min[-1], ASSET_PRICE_PREC)))
+    buy_stop(SYMBOL, order_size, str(round(ema_15min[-1] * BUY_STOP_LVL, 3)))
+if sma_5min[-1] < ema_15min[-1]:
+    print("ema bigger then sma")
+    limit_sell(SYMBOL, 5, str(round(ema_15min[-1], ASSET_PRICE_PREC)))
+    sell_stop(SYMBOL, order_size, str(round(ema_15min[-1] * SELL_STOP_LVL, 3)))    
+# limit_buy(SYMBOL, 5, str(round(15.555, ASSET_PRICE_PREC)))
+
+
+# sub_client.subscribe_symbol_ticker_event(SYMBOL.lower(), ticker_callback, error)
+# sub_client.subscribe_candlestick_event(SYMBOL.lower(), CandlestickInterval.MIN5, candle_callback_5min, error)
+# sub_client.subscribe_candlestick_event(SYMBOL.lower(), CandlestickInterval.MIN15, candle_callback_15min, error)
