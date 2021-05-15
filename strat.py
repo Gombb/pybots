@@ -31,7 +31,7 @@ def bear_trend(low_moving_average, high_moving_average):
 def sma21_bull_buy(tick_price, rsi, low_TF_MA, high_TF_MA):    
     rsi_is_bull = rsi[-1] >= 51
     low_crossed_sma = tick_price <= low_TF_MA[-1]
-    bulltrend = low_TF_MA > high_TF_MA
+    bulltrend = low_TF_MA[-1] > high_TF_MA[-1]
     print(f'rsi is bull: {rsi_is_bull}')
     print(f'low crossed sma: {low_crossed_sma}')
     print(f'bulltrend: {bulltrend}')
@@ -52,7 +52,7 @@ def sma21_bull_sell(rsi):
 def sma21_bear_sell(tick_price, rsi, low_TF_MA, high_TF_MA):
     rsi_is_bear = rsi[-1] <= 49
     high_crossed_sma = tick_price >= low_TF_MA[-1]
-    beartrend = high_TF_MA > low_TF_MA
+    beartrend = high_TF_MA[-1] > low_TF_MA[-1]
     print("________")
     print(f'rsi is bear: {rsi_is_bear}')
     print(f'high crossed sma: {high_crossed_sma}')
