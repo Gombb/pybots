@@ -9,7 +9,10 @@ request_client = RequestClient(api_key=API_KEY, secret_key=API_SECRET, url="http
 def request_user_balance():
     
     result = request_client.get_balance()
-    return {"balance": result[0].balance, "asset": result[0].asset}
+    for dict in result: 
+        if dict.asset == "USDT":
+           result = dict 
+    return {"balance": result.balance, "asset": result.asset}
 
 
 def request_all_orders_for_symbol(symbol):
