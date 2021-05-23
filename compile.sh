@@ -20,5 +20,5 @@ pip3 install apscheduler
 
 sudo git clone https://github.com/Binance-docs/Binance_Futures_python.git
 cd Binance_Futures_python
-python3 setup.py.install
+sudo python3 setup.py install
 
