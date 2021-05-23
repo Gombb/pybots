@@ -6,7 +6,6 @@ from binance_f.base.printobject import *
 from config import *
 from time import time
 
-
 request_client = RequestClient(api_key=API_KEY, secret_key=API_SECRET, url="https://fapi.binance.com")
 
 

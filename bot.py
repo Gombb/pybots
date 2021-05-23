@@ -121,15 +121,15 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
             #     buy_stop(SYMBOL, user_session["active_position"].split(" ")[1], str(round(tick_price * BUY_STOP_LVL, 3)))
             #     save_trades_data("bull", "straight_buy", tick_price, order.origQty)
             if sma21_bull_buy(tick_price, rsi_5min, sma_5min, ema_15min):
+                user_session["in_position"] = True
                 order = market_buy(SYMBOL, order_size)
                 save_trades_data("bull", "sma21_entry", tick_price, order.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                user_session["in_position"] = True
                 user_session["active_position"] = "+ " + str(order.origQty)
                 buy_stop(SYMBOL, str(order.origQty), str(round(tick_price * BUY_STOP_LVL, ASSET_PRICE_PREC)))
             if sma21_bear_sell(tick_price, rsi_5min, sma_5min, ema_15min) == True:
+                user_session["in_position"] = True
                 order = market_sell(SYMBOL, order_size)
                 save_trades_data("bear", "sma21_entry", tick_price, order.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
-                user_session["in_position"] = True
                 user_session["active_position"] = "- "+ str(order.origQty)
                 sell_stop(SYMBOL, str(order.origQty), str(round(tick_price * SELL_STOP_LVL, ASSET_PRICE_PREC)))
         if user_session["in_position"] == True:
@@ -260,7 +260,6 @@ def candle_callback_15min(data_type: 'SubscribeMessageType', event: 'any'):
                     limit_sell(SYMBOL, order_size, str(round(ema_15min[-1], ASSET_PRICE_PREC)))
                     sell_stop(SYMBOL, order_size, str(round(ema_15min[-1] * SELL_STOP_LVL, 3)))
                 user_session["active_limit"] = True
-
             # if bull_trend(sma_5min, ema_15min):
         #     limit_buy(SYMBOL, 5, str(round(ema_15min[-1], ASSET_PRICE_PREC)))
         #     buy_stop(SYMBOL, order_size, str(round(ema_15min[-1] * BUY_STOP_LVL, 3)))
@@ -282,7 +281,6 @@ user_session["balance"] = req_user_data.request_user_balance()["balance"]
 sync_session_positon(SYMBOL)
 _5_min_close = []
 _15_min_close = []
-# REFACTOR EMAS -- TF relationship
 
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/9, CURRENT_TIME, "5m", _5_min_close)
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_close)
@@ -290,18 +288,6 @@ pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_clos
 
 sma_5min = calculate_MA(_5_min_close, SMA_5MIN_PERIOD, None)
 ema_15min = calculate_MA(_15_min_close, None,  EMA_15MIN_PERIOD)
-
-
-# order_size = str(round(user_session["balance"] * POS_SIZE / ema_15min[-1], CONTRACT_ORDER_PREC))
-# if sma_5min[-1] > ema_15min[-1]:
-#     print("sma bigger then ema")
-#     limit_buy(SYMBOL, 5, str(round(ema_15min[-1], ASSET_PRICE_PREC)))
-#     buy_stop(SYMBOL, order_size, str(round(ema_15min[-1] * BUY_STOP_LVL, 3)))
-# if sma_5min[-1] < ema_15min[-1]:
-#     print("ema bigger then sma")
-#     limit_sell(SYMBOL, 5, str(round(ema_15min[-1], ASSET_PRICE_PREC)))
-#     sell_stop(SYMBOL, order_size, str(round(ema_15min[-1] * SELL_STOP_LVL, 3)))
-# # limit_buy(SYMBOL, 5, str(round(15.555, ASSET_PRICE_PREC)))
 
 
 sub_client.subscribe_symbol_ticker_event(SYMBOL.lower(), ticker_callback, error)

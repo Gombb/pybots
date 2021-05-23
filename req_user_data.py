@@ -23,11 +23,11 @@ def request_user_position():
     result = request_client.get_position()
     return result
 
-res = request_user_position()
-for i in res:
-    if i.symbol == "LINKUSDT":
-        PrintBasic.print_obj(i)
-        print(type(i))
+# res = request_user_position()
+# for i in res:
+#     if i.symbol == "LINKUSDT":
+#         PrintBasic.print_obj(i)
+#         print(type(i))
 
 
 def request_trading_stats():    
