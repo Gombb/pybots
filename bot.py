@@ -38,7 +38,6 @@ handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s -
 logger.addHandler(handler)
 sub_client = SubscriptionClient(api_key=API_KEY, secret_key=API_SECRET, uri="wss://fstream.binance.com/ws")
 
-
 def sync_session_positon(symbol_ticker):
     global user_session
     result = req_user_data.request_user_position()
@@ -115,6 +114,13 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
         print(f'last EMA value ||  {ema_15min[-1]}')
         CURRENT_TIME = event.eventTime
         if user_session["in_position"] == False:
+            # print()
+            # if straight_buy(tick_price):
+            #     order = market_buy(SYMBOL, order_size)
+            #     user_session["in_position"] = True
+            #     user_session["active_position"] = "+ "+ str(order.origQty)
+            #     buy_stop(SYMBOL, user_session["active_position"].split(" ")[1], str(round(tick_price * BUY_STOP_LVL, 3)))
+            #     save_trades_data("bull", "straight_buy", tick_price, order.origQty)
             if sma21_bull_buy(tick_price, rsi_5min, sma_5min, ema_15min):
                 user_session["in_position"] = True
                 order = market_buy(SYMBOL, order_size)
@@ -139,6 +145,7 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                     cancel_order = cancell_all_order(SYMBOL)
                     PrintBasic.print_obj(sell_order)
                     PrintBasic.print_obj(cancel_order)
+
             if positional_direction == "-":
                 if sma21_bear_buy(rsi_5min):
                     buy_order = market_buy(SYMBOL, active_pos_size)
@@ -178,6 +185,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
             sma_5min = calculate_MA(_5_min_close, SMA_5MIN_PERIOD, None)
             ema_15min = calculate_MA(_15_min_close, None,  EMA_15MIN_PERIOD)
             order_size = str(round(user_session["balance"] * POS_SIZE / _5_min_close[-1], CONTRACT_ORDER_PREC))
+
             if user_session["in_position"] == True:
                 if positional_direction == "-":
                     if sma21_bear_backcross:
@@ -189,6 +197,7 @@ def candle_callback_5min(data_type: 'SubscribeMessageType', event: 'any'):
                         buy_stop(SYMBOL, str(long_open.origQty), str(round(_5_min_close[-1] * BUY_STOP_LVL, ASSET_PRICE_PREC)))
                         save_trades_data("bear", "sma21_backcross_entry", _5_min_close[-1], long_open.origQty, rsi_5min[-1], sma_5min[-1], sma_5min[-2], ema_15min[-1])
                         sync_session_positon(SYMBOL)
+
                 if positional_direction == "+":
                     if sma21_bull_backcross:
                         cancell_all_order(SYMBOL)
@@ -207,6 +216,7 @@ def candle_callback_15min(data_type: 'SubscribeMessageType', event: 'any'):
     if data_type == SubscribeMessageType.RESPONSE:
             print("Event ID: ", event)
     elif  data_type == SubscribeMessageType.PAYLOAD:
+        # print("15min alive!")
         if event.data.isClosed == True:
             print("Event type: ", event.eventType)
             print("Event time: ", event.eventTime)
@@ -235,7 +245,6 @@ user_session["balance"] = req_user_data.request_user_balance()["balance"]
 sync_session_positon(SYMBOL)
 _5_min_close = []
 _15_min_close = []
-
 
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/9, CURRENT_TIME, "5m", _5_min_close)
 pre_fill_close_list(CURRENT_TIME-UNIX_9DAYS/3, CURRENT_TIME, "15m", _15_min_close)
