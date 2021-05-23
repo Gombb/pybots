@@ -24,7 +24,7 @@ SMA_5MIN_PERIOD = 21
 EMA_15MIN_PERIOD = 50
 CURRENT_TIME = 0
 UNIX_9DAYS = 691200000
-POS_SIZE = 0.5
+POS_SIZE = 1
 BUY_STOP_LVL = 0.97
 SELL_STOP_LVL = 1.03
 ASSET_PRICE_PREC = 2
@@ -145,7 +145,6 @@ def ticker_callback(data_type: 'SubscribeMessageType', event: 'any'):
                     cancel_order = cancell_all_order(SYMBOL)
                     PrintBasic.print_obj(sell_order)
                     PrintBasic.print_obj(cancel_order)
-
             if positional_direction == "-":
                 if sma21_bear_buy(rsi_5min):
                     buy_order = market_buy(SYMBOL, active_pos_size)
