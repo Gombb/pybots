@@ -1,5 +1,8 @@
 #!/bin/bash
 
+mkdir cache/
+touch cache/bull_strat.csv cache/bear_stat.csv cache/trade_history.csv
+
 sudo apt-get update
 sudo apt-get dist-upgrade
 sudo apt-get install build-essential
