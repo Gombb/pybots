@@ -1,11 +1,11 @@
 import logging
+import config
+import math
 from binance_d import RequestClient
 from binance_d.constant.test import *
 from binance_d.model import *
 from binance_d.exception.binanceapiexception import BinanceApiException
-import config
-import math
- 
+
 
 logger = logging.getLogger("binance-futures")
 logger.setLevel(level=logging.INFO)
